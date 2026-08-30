@@ -995,6 +995,7 @@
                 <div class="invoice-header">
                     <h2>شاليه كروز</h2>
                     <p>سند تأكيد حجز رسمي وفاتورة تفصيلية</p>
+                    <p style="margin-top: 4px; font-size: 10px; color: #57606f;">السجل التجاري: 1010XXXXXX | هاتف: 0550000000</p>
                 </div>
 
                 <div class="invoice-meta">
@@ -1036,8 +1037,9 @@
                 </table>
 
                 <div class="deposit-policy-box">
-                    <h5><i class="fa-solid fa-circle-info"></i> سياسة العربون وشروط الاسترجاع:</h5>
+                    <h5><i class="fa-solid fa-circle-info"></i> سياسة العربون والتأمين والشروط:</h5>
                     • العربون المدفوع يُعد تأكيداً رسمياً للحجز ويتم خصمه من إجمالي قيمة الإيجار.<br>
+                    • <b>بند التأمين:</b> يُؤخذ مبلغ التأمين قبل الدخول، ويُسترد بالكامل في حال عدم وجود أي تلفيات أو حوادث في المرافق.<br>
                     • في حال إلغاء الحجز من قبل العميل قبل موعد الاستحقاق بـ 48 ساعة أو أكثر، يتم استرجاع العربون كاملاً. أما في حال الإلغاء بأقل من 48 ساعة، يعتبر العربون غير مسترد لضمان حقوق الشاليه.
                 </div>
 
@@ -1469,7 +1471,7 @@
         function sendWhatsApp() {
             if(!activeReceipt) return;
             let rem = activeReceipt.price - activeReceipt.paid;
-            let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${activeReceipt.date} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س (طريقة الدفع: ${activeReceipt.method || 'تحويل بنكي'})\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\n*سياسة العربون:* العربون المدفوع يؤكد الحجز ويُخصم من الإيجار، ويُسترد في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر.\n\nنتشرف بزيارتكم!`;
+            let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${activeReceipt.date} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س (طريقة الدفع: ${activeReceipt.method || 'تحويل بنكي'})\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\n*سياسة العربون والتأمين:* العربون المدفوع يؤكد الحجز ويُخصم من الإيجار، ويُسترد في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر. مبلغ التأمين يُؤخذ قبل الدخول ويُسترد في حال عدم وجود تلفيات أو حوادث.\n\nنتشرف بزيارتكم!`;
             let url = `https://wa.me/${activeReceipt.phone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
