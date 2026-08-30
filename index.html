@@ -725,7 +725,7 @@
             <div class="card-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 8px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 280px; font-size: 13px;">
-                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel</button>
+                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel الاحترافي (مرجع موحد)</button>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -883,22 +883,19 @@
             let existingOnDate = bookings.filter(b => b.date === date && b.id != editId);
             if(existingOnDate.length === 0) return null; // متاح تماماً
 
-            // إذا كان محجوزاً مسبقاً "قسمين" (كامل)
             let hasFull = existingOnDate.some(b => b.section === 'قسمين');
             if(hasFull) return 'اليوم محجوز بالكامل (قسمين) مسبقاً!';
 
-            // إذا طلب المستخدم حجز "قسمين" وكان هناك قسم محجوز (نساء أو رجال)
             if(requestedSection === 'قسمين') {
                 return 'عذراً، يوجد حجز قائم لأحد الأقسام في هذا اليوم، لا يمكن حجز القسمين معاً!';
             }
 
-            // إذا طلب حجز قسم معين (نساء أو رجال) وكان نفس القسم محجوزاً بالفعل
             let hasSameSection = existingOnDate.some(b => b.section === requestedSection);
             if(hasSameSection) {
                 return `عذراً، قسم (${requestedSection}) محجوز مسبقاً في هذا التاريخ!`;
             }
 
-            return null; // القسم الآخر متاح (مثلاً الرجال محجوز والنساء متاح والعكس)
+            return null;
         }
 
         function saveBookingData(e) {
@@ -909,7 +906,6 @@
             let price = parseFloat(document.getElementById('b-price').value);
             let paid = parseFloat(document.getElementById('b-paid').value);
 
-            // فحص التعارض الآلي
             let conflictMsg = checkBookingConflict(date, section, editId);
             if(conflictMsg) {
                 alert('⚠️ تنبيه تعارض الحجز:\n' + conflictMsg);
@@ -1105,7 +1101,6 @@
             });
         }
 
-        // دوال التحكم بالتقويم الشامل
         function changeMonth(direction) {
             currentCalendarMonth += direction;
             if(currentCalendarMonth > 11) currentCalendarMonth = 0;
@@ -1126,7 +1121,6 @@
             document.getElementById('cal-month-title').innerText = `حجوزات شهر ${monthName} 2026`;
             document.getElementById('calendar-details-box').style.display = 'none';
             
-            // حساب عدد الأيام في الشهر الحالي 2026
             let daysInMonth = new Date(2026, currentCalendarMonth + 1, 0).getDate();
             
             for (let i = 1; i <= daysInMonth; i++) {
@@ -1166,7 +1160,6 @@
             }
         }
 
-        // البحث السريع في التقويم لتاريخ محدد
         function quickCheckDate() {
             let checkDate = document.getElementById('calendar-search-date').value;
             if(!checkDate) {
@@ -1255,15 +1248,100 @@
             document.getElementById('financial-report-content').innerHTML = html;
         }
 
+        // === تعديل دالة تصدير إكسل الاحترافية كمرجع موحد يحفظ بنفس الاسم ===
         function exportToExcel() {
-            let csv = '\uFEFFالاسم,الجوال,التاريخ,الفترة,القسم,الإيجار,الواصل,المتبقي,الحالة\n';
-            bookings.forEach(b => {
-                csv += `"${b.name}","${b.phone}","${b.date}","${b.period}","${b.section}",${b.price},${b.paid},${b.price - b.paid},"${b.status}"\n`;
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>سجل الحجوزات</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; direction: rtl; font-family: 'Cairo', Tahoma, sans-serif; }
+                        th { background-color: #1e272e; color: #ffffff; font-weight: bold; text-align: center; border: 1px solid #718093; padding: 10px; font-size: 13pt; }
+                        td { border: 1px solid #cbd5e1; text-align: center; padding: 8px; font-size: 11pt; }
+                        .title-row { background-color: #ff9f43; color: #ffffff; font-size: 15pt; font-weight: bold; text-align: center; padding: 15px; }
+                        .summary-row { background-color: #f1f2f6; font-weight: bold; color: #2f3640; }
+                    </style>
+                </head>
+                <body>
+                    <table>
+                        <tr>
+                            <td colspan="10" class="title-row">شاليه كروز - سجل الحجوزات والماليات (المرجع الرئيسي المعتمد)</td>
+                        </tr>
+                        <tr>
+                            <th>م</th>
+                            <th>اسم المستأجر</th>
+                            <th>رقم الجوال</th>
+                            <th>تاريخ الحجز</th>
+                            <th>الفترة</th>
+                            <th>القسم</th>
+                            <th>إجمالي الإيجار</th>
+                            <th>المبلغ الواصل</th>
+                            <th>المبلغ المتبقي</th>
+                            <th>حالة الحجز</th>
+                        </tr>
+            `;
+
+            let totalExpected = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+
+            bookings.forEach((b, index) => {
+                let rem = b.price - b.paid;
+                totalExpected += b.price;
+                totalPaid += b.paid;
+                totalRemaining += rem;
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td style="text-align: right; font-weight: bold;">${b.name}</td>
+                        <td>${b.phone}</td>
+                        <td>${b.date}</td>
+                        <td>${b.period}</td>
+                        <td>${b.section}</td>
+                        <td style="mso-number-format:'#,##0';">${b.price}</td>
+                        <td style="mso-number-format:'#,##0'; color: #10ac84; font-weight: bold;">${b.paid}</td>
+                        <td style="mso-number-format:'#,##0'; color: #c62828; font-weight: bold;">${rem}</td>
+                        <td>${b.status}</td>
+                    </tr>
+                `;
             });
-            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+
+            html += `
+                <tr class="summary-row">
+                    <td colspan="6" style="text-align: left; font-weight: bold;">الإجمالي الكلي:</td>
+                    <td style="mso-number-format:'#,##0'; font-weight: bold;">${totalExpected}</td>
+                    <td style="mso-number-format:'#,##0'; font-weight: bold; color: #10ac84;">${totalPaid}</td>
+                    <td style="mso-number-format:'#,##0'; font-weight: bold; color: #c62828;">${totalRemaining}</td>
+                    <td>-</td>
+                </tr>
+            `;
+
+            html += `
+                    </table>
+                </body>
+                </html>
+            `;
+
+            let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'تقرير_حجوزات_شاليه_كروز.csv';
+            // اسم موحد وثابت ليكون مرجعاً يتم تحديثه فوق نفس الملف عند كل تصدير
+            link.download = 'سجل_حجوزات_شاليه_كروز_المرجع_الرئيسي.xls';
             link.click();
         }
 
@@ -1299,6 +1377,10 @@
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('current-date-badge').innerText = new Date().toLocaleDateString('ar-SA', options);
 
+        saveAndRefresh();
+    </script>
+</body>
+</html>
         saveAndRefresh();
     </script>
 </body>
