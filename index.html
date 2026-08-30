@@ -469,39 +469,40 @@
         }
         .modal-content {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
-            width: 550px;
+            width: 700px;
             max-width: 100%;
             text-align: right;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative;
         }
 
-        /* تنسيق فاتورة / سند تأكيد الحجز المخصص للطباعة */
+        /* تنسيق فاتورة / سند تأكيد الحجز المخصص لمقاس A4 ودقة الطباعة */
         .invoice-print-container {
             background: #fff;
             color: #2f3640;
             font-family: 'Cairo', sans-serif;
             text-align: right;
+            padding: 10px;
         }
 
         .invoice-header {
             text-align: center;
             border-bottom: 2px solid #ff9f43;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
         }
 
         .invoice-header h2 {
             font-size: 24px;
             font-weight: 900;
             color: #ff9f43;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .invoice-header p {
-            font-size: 13px;
+            font-size: 12px;
             color: #718093;
             font-weight: 600;
         }
@@ -509,41 +510,41 @@
         .invoice-meta {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
+            font-size: 12px;
             background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
             font-weight: 700;
         }
 
         .client-info-box {
             background: #fdfdfd;
             border: 1px solid #e2e8f0;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 12px;
         }
 
         .client-info-box h4 {
-            font-size: 14px;
+            font-size: 13px;
             color: #1e272e;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border-bottom: 1px solid #eee;
-            padding-bottom: 4px;
+            padding-bottom: 3px;
         }
 
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .invoice-table th, .invoice-table td {
             border: 1px solid #cbd5e1;
-            padding: 8px 10px;
-            font-size: 12px;
+            padding: 7px 10px;
+            font-size: 11px;
             text-align: center;
         }
 
@@ -557,21 +558,36 @@
             background: #fff3cd;
             border: 1px solid #ffeeba;
             color: #856404;
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             font-size: 11px;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            line-height: 1.5;
+            margin-bottom: 12px;
         }
 
         .invoice-notes h5 {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 900;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
-        /* تحكم بالطباعة البرمجية بحيث تطبع الفاتورة فقط دون باقي التطبيق */
+        .deposit-policy-box {
+            background: #e8f4fd;
+            border: 1px solid #bbeeff;
+            color: #0c5460;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        /* تحكم برمجى للطباعة بحيث تطبع مقاس A4 حصراً وبدون الشاشة الكلية */
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
             body * {
                 visibility: hidden;
             }
@@ -579,20 +595,26 @@
                 visibility: visible;
             }
             #receipt-modal {
-                position: absolute;
+                position: fixed;
                 left: 0;
                 top: 0;
                 width: 100%;
-                height: auto;
+                height: 100%;
                 background: white;
-                display: block !important;
+                display: flex !important;
+                align-items: flex-start;
+                justify-content: center;
                 padding: 0;
+                z-index: 99999;
             }
             .modal-content {
                 box-shadow: none;
                 width: 100%;
-                padding: 0;
+                max-width: 210mm;
+                min-height: 297mm;
+                padding: 10mm;
                 border: none;
+                background: white;
             }
             .no-print {
                 display: none !important;
@@ -765,10 +787,11 @@
                             <input type="text" id="b-rem" readonly style="background: #f1f2f6; font-weight: bold; color: #c62828;">
                         </div>
                         <div class="form-group">
-                            <label>طريقة الدفع</label>
+                            <label>طريقة دفع العربون</label>
                             <select id="b-method">
                                 <option>تحويل بنكي</option>
                                 <option>كاش</option>
+                                <option>شبكة</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -948,7 +971,7 @@
         </div>
     </main>
 
-    <!-- نافذة سند تأكيد الحجز (فاتورة تفصيلية) -->
+    <!-- نافذة سند تأكيد الحجز (فاتورة تفصيلية بمقاس A4) -->
     <div id="receipt-modal" class="modal">
         <div class="modal-content">
             <div id="invoice-printable-area" class="invoice-print-container">
@@ -959,7 +982,7 @@
 
                 <div class="invoice-meta">
                     <div>رقم السند: <span id="inv-id">#--</span></div>
-                    <div>تاريخ الاعتماد: <span id="inv-print-date">--</span></div>
+                    <div>تاريخ ووقت الإصدار: <span id="inv-print-date">--</span></div>
                 </div>
 
                 <div class="client-info-box">
@@ -978,6 +1001,7 @@
                             <th>القسم</th>
                             <th>المبلغ كامل</th>
                             <th>العربون (المدفوع)</th>
+                            <th>طريقة دفع العربون</th>
                             <th>المتبقي</th>
                             <th>حالة الحجز</th>
                         </tr>
@@ -987,23 +1011,30 @@
                             <td id="inv-section">--</td>
                             <td id="inv-price">-- ر.س</td>
                             <td id="inv-paid" style="color: #10ac84; font-weight: bold;">-- ر.س</td>
+                            <td id="inv-method">--</td>
                             <td id="inv-rem" style="color: #c62828; font-weight: bold;">-- ر.س</td>
                             <td><span id="inv-status-badge" class="badge success">--</span></td>
                         </tr>
                     </tbody>
                 </table>
 
+                <div class="deposit-policy-box">
+                    <h5><i class="fa-solid fa-circle-info"></i> سياسة العربون وشروط الاسترجاع:</h5>
+                    • العربون المدفوع يُعد تأكيداً رسمياً للحجز ويتم خصمه من إجمالي قيمة الإيجار.<br>
+                    • في حال إلغاء الحجز من قبل العميل قبل موعد الاستحقاق بـ 48 ساعة أو أكثر، يتم استرجاع العربون كاملاً. أما في حال الإلغاء بأقل من 48 ساعة، يعتبر العربون غير مسترد لضمان حقوق الشاليه.
+                </div>
+
                 <div class="invoice-notes">
-                    <h5>تنبيهات والشروط العامة لاستخدام الشاليه:</h5>
-                    1. الحفاظ على نظافة المكان والمرافق العامة وإعادتها كما كانت.<br>
-                    2. الالتزام بموعد الدخول والخروج المحدد بدقة لضمان راحة الجميع.<br>
-                    3. منع استخدام الألعاب النارية أو إحداث إزعاج بيئي داخل النطاق السكني.<br>
-                    4. إدارة الشاليه غير مسئولة عن فقدان الأغراض الشخصية الثمينة غير المسلمة للإدارة.
+                    <h5><i class="fa-solid fa-triangle-exclamation"></i> تنبيهات والشروط العامة لاستخدام الشاليه:</h5>
+                    1. الحفاظ التام على نظافة المكان والمرافق العامة وإعادتها كما كانت عند التسليم.<br>
+                    2. الالتزام بموعد الدخول والخروج المحدد بدقة لضمان راحة وخدمة جميع الضيوف.<br>
+                    3. منع استخدام الألعاب النارية أو إحداث أي إزعاج بيئي داخل النطاق السكني.<br>
+                    4. إدارة الشاليه غير مسئولة نهائياً عن فقدان الأغراض الشخصية الثمينة غير المسلمة لإدارة الاستقبال.
                 </div>
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;" class="no-print">
-                <button onclick="window.print()" class="btn"><i class="fa-solid fa-print"></i> طباعة الفاتورة PDF</button>
+                <button onclick="window.print()" class="btn"><i class="fa-solid fa-print"></i> طباعة الفاتورة A4</button>
                 <button onclick="sendWhatsApp()" class="btn btn-success"><i class="fa-brands fa-whatsapp"></i> إرسال واتساب</button>
                 <button onclick="closeReceiptModal()" class="btn" style="background: #a4b0be;">إغلاق</button>
             </div>
@@ -1139,7 +1170,7 @@
             document.getElementById('b-section').value = b.section;
             document.getElementById('b-price').value = b.price;
             document.getElementById('b-paid').value = b.paid;
-            document.getElementById('b-method').value = b.method;
+            document.getElementById('b-method').value = b.method || 'تحويل بنكي';
             document.getElementById('b-status').value = b.status;
             calcRemaining();
 
@@ -1393,10 +1424,10 @@
 
         function openReceipt(b) {
             activeReceipt = b;
-            let currentDateStr = new Date().toLocaleDateString('ar-SA');
+            let currentDateTimeStr = new Date().toLocaleString('ar-SA');
             
             document.getElementById('inv-id').innerText = '#' + b.id;
-            document.getElementById('inv-print-date').innerText = currentDateStr;
+            document.getElementById('inv-print-date').innerText = currentDateTimeStr;
             document.getElementById('inv-client-name').innerText = b.name;
             document.getElementById('inv-client-phone').innerText = b.phone;
             document.getElementById('inv-booking-date').innerText = b.date;
@@ -1405,6 +1436,7 @@
             document.getElementById('inv-section').innerText = b.section;
             document.getElementById('inv-price').innerText = b.price + ' ر.س';
             document.getElementById('inv-paid').innerText = b.paid + ' ر.س';
+            document.getElementById('inv-method').innerText = b.method || 'تحويل بنكي';
             document.getElementById('inv-rem').innerText = (b.price - b.paid) + ' ر.س';
             
             let badgeEl = document.getElementById('inv-status-badge');
@@ -1421,7 +1453,7 @@
         function sendWhatsApp() {
             if(!activeReceipt) return;
             let rem = activeReceipt.price - activeReceipt.paid;
-            let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${activeReceipt.date} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\nنتشرف بزيارتكم!`;
+            let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${activeReceipt.date} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س (طريقة الدفع: ${activeReceipt.method || 'تحويل بنكي'})\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\n*سياسة العربون:* العربون المدفوع يؤكد الحجز ويُخصم من الإيجار، ويُسترد في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر.\n\nنتشرف بزيارتكم!`;
             let url = `https://wa.me/${activeReceipt.phone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
