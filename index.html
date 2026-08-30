@@ -78,7 +78,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* القائمة الجانبية المعدلة لحل مشكلة التمدد والتجمد */
         aside {
             width: 280px;
             height: 100vh;
@@ -152,7 +151,6 @@
             text-align: center;
         }
 
-        /* المحتوى الرئيسي مع تثبيت الترويسة */
         main {
             flex-grow: 1;
             padding: 20px 25px;
@@ -385,7 +383,6 @@
         .badge.success { background: #e1f5fe; color: #0288d1; }
         .badge.danger { background: #ffebee; color: #c62828; }
 
-        /* التقويم الشامل */
         .calendar-controls {
             display: flex;
             justify-content: space-between;
@@ -466,7 +463,6 @@
             display: none;
         }
 
-        /* نافذة سند تأكيد الحجز */
         .modal {
             display: none;
             position: fixed;
@@ -592,14 +588,17 @@
             line-height: 1.3;
         }
 
+        /* تعديلات إخفاء الرابط والهوامش التلقائية عند الطباعة */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0mm;
+                margin: 0mm; /* إلغاء هوامش المتصفح الافتراضية لمنع ظهور الرابط والتاريخ ورقم الصفحة */
             }
             body {
                 background: white !important;
                 margin: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
             body * {
                 visibility: hidden;
@@ -997,7 +996,6 @@
         </div>
     </main>
 
-    <!-- نافذة سند تأكيد الحجز (فاتورة تفصيلية بمقاس A4) -->
     <div id="receipt-modal" class="modal">
         <div class="modal-content">
             <div id="invoice-printable-area" class="invoice-print-container">
@@ -1070,13 +1068,11 @@
     </div>
 
     <script>
-        // دالة مساعدة لدمج وتوليد التاريخ الهجري والميلادي معاً لأي تاريخ مدخل
         function formatDualDate(dateStr) {
             if (!dateStr) return '';
             try {
                 let d = new Date(dateStr);
                 if (isNaN(d.getTime())) return dateStr;
-                let gregFormatted = d.toLocaleDateString('en-GB'); // YYYY-MM-DD or DD/MM/YYYY
                 let hijriFormatted = d.toLocaleDateString('ar-SA-u-ca-islamic-umalqura', {
                     day: 'numeric',
                     month: 'long',
@@ -1526,7 +1522,6 @@
             document.getElementById('financial-report-content').innerHTML = html;
         }
 
-        // دالة تصدير الإكسل المعدلة والمطورة لتعمل بكفاءة تامة بدون تلف الملف
         function exportToExcel() {
             let currentMonthName = monthNames[currentCalendarMonth];
             let totalExpected = 0;
