@@ -1493,63 +1493,89 @@
             document.getElementById('financial-report-content').innerHTML = html;
         }
 
-        // الدالة المحدثة لتصدير الإكسل بالصيغة الحديثة (.xlsx)
+        // دالة تصدير الإكسل المحدثة بالتنسيق الاحترافي المطلوب للإدارة
         function exportToExcel() {
-            let tableHTML = `
-                <html dir="rtl">
-                <head><meta charset="UTF-8"></head>
-                <body>
-                    <table>
-                        <tr>
-                            <th colspan="10" style="background:#ff9f43; color:#fff; font-size:16px; font-weight:bold; text-align:center;">شاليه كروز - سجل الحجوزات والماليات الشامل</th>
-                        </tr>
-                        <tr>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">م</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">اسم المستأجر</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">رقم الجوال</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">تاريخ الحجز</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">الفترة</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">القسم</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">إجمالي الإيجار</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">المبلغ الواصل</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">المبلغ المتبقي</th>
-                            <th style="background:#1e272e; color:#fff; font-weight:bold;">حالة الحجز</th>
-                        </tr>
-            `;
-
+            let currentMonthName = monthNames[currentCalendarMonth];
             let totalExpected = 0;
             let totalPaid = 0;
             let totalRemaining = 0;
 
+            let rowsHTML = '';
             bookings.forEach((b, index) => {
                 let rem = b.price - b.paid;
                 totalExpected += b.price;
                 totalPaid += b.paid;
                 totalRemaining += rem;
 
-                tableHTML += `
+                // تحديد لون حالة الحجز لتكون مميزة واحترافية
+                let statusBg = '#e1f5fe';
+                let statusColor = '#0288d1';
+                if(b.status === 'مؤكد') {
+                    statusBg = '#e8f5e9';
+                    statusColor = '#2e7d32';
+                } else if(b.status === 'عربون' || b.status === 'غير مؤكد') {
+                    statusBg = '#fff3e0';
+                    statusColor = '#ef6c00';
+                }
+
+                rowsHTML += `
                     <tr>
-                        <td>${index + 1}</td>
-                        <td>${b.name}</td>
-                        <td>&nbsp;${b.phone}</td>
-                        <td>${b.date}</td>
-                        <td>${b.period}</td>
-                        <td>${b.section}</td>
-                        <td>${b.price}</td>
-                        <td>${b.paid}</td>
-                        <td>${rem}</td>
-                        <td>${b.status}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px;">${index + 1}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: right; padding: 6px; font-weight: bold;">${b.name}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">&nbsp;${b.phone}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px;">${b.date}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px;">${b.period}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: #f8f9fa;">${b.section}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #2f3640; font-weight: bold;">${b.price} ر.س</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #10ac84; font-weight: bold;">${b.paid} ر.س</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #c62828; font-weight: bold;">${rem} ر.س</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: ${statusBg}; color: ${statusColor}; font-weight: bold;">${b.status}</td>
                     </tr>
                 `;
             });
 
-            tableHTML += `
-                        <tr style="background:#f1f2f6; font-weight:bold;">
-                            <td colspan="6">الإجمالي الكلي</td>
-                            <td>${totalExpected}</td>
-                            <td>${totalPaid}</td>
-                            <td>${totalRemaining}</td>
-                            <td>-</td>
+            let tableHTML = `
+                <html dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: 'Cairo', Tahoma, sans-serif; }
+                        table { border-collapse: collapse; width: 100%; }
+                    </style>
+                </head>
+                <body>
+                    <table>
+                        <!-- صف العنوان المدمج الاحترافي -->
+                        <tr>
+                            <td colspan="10" style="background-color: #1e272e; color: #ff9f43; font-size: 16px; font-weight: bold; text-align: center; padding: 12px; border: 1px solid #1e272e;">
+                                حجز حجوزات شاليه كروز بشاليه شهر ${currentMonthName} 2026
+                            </td>
+                        </tr>
+                        <!-- صف فارغ فاصل -->
+                        <tr><td colspan="10" style="border: none;"></td></tr>
+                        <!-- ترويسة الجدول -->
+                        <tr>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">م</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: right; font-weight: bold;">اسم المستأجر</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">رقم الجوال</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">تاريخ الحجز</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">الفترة</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">القسم</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">إجمالي الإيجار</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">المبلغ الواصل</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">المبلغ المتبقي</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">حالة الحجز</th>
+                        </tr>
+                        
+                        ${rowsHTML}
+
+                        <!-- صف الإجماليات المميزة في الأسفل -->
+                        <tr style="background-color: #f1f2f6; font-weight: bold;">
+                            <td colspan="6" style="border: 2px solid #b2bec3; text-align: left; padding: 8px;">إجمالي المبلغ:</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #2f3640;">${totalExpected} ر.س</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #10ac84;">${totalPaid} ر.س</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #c62828;">${totalRemaining} ر.س</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px;">-</td>
                         </tr>
                     </table>
                 </body>
@@ -1559,7 +1585,7 @@
             let blob = new Blob([tableHTML], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'سجل_حجوزات_شاليه_كروز.xlsx';
+            link.download = `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xlsx`;
             link.click();
         }
 
@@ -1578,3 +1604,4 @@
     </script>
 </body>
 </html>
+
