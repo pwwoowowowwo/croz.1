@@ -78,9 +78,10 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* القائمة الجانبية */
+        /* القائمة الجانبية المعدلة لحل مشكلة التمدد والتجمد */
         aside {
             width: 280px;
+            height: 100vh;
             background: var(--dark-bg);
             color: white;
             display: flex;
@@ -89,6 +90,7 @@
             box-shadow: 4px 0 15px rgba(0,0,0,0.1);
             z-index: 10;
             transition: transform 0.3s ease, width 0.3s ease;
+            position: relative;
         }
 
         aside.hidden {
@@ -102,6 +104,7 @@
             text-align: center;
             background: rgba(255,255,255,0.05);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .logo-area h1 {
@@ -121,6 +124,8 @@
             padding: 15px 0;
             flex-grow: 1;
             overflow-y: auto;
+            max-height: calc(100vh - 160px);
+            overscroll-behavior: contain;
         }
 
         .nav-links li {
@@ -665,7 +670,7 @@
                 <li onclick="switchTab('backup', this)"><i class="fa-solid fa-database"></i> النسخ الاحتياطي</li>
             </ul>
         </div>
-        <div style="padding: 15px; text-align: center; color: #a4b0be; font-size: 11px;">
+        <div style="padding: 15px; text-align: center; color: #a4b0be; font-size: 11px; flex-shrink: 0;">
             نسخة إدارية مطورة | تطوير FAHAD AL-MUKLFI   جميع الحقوق محفوظة 2026
         </div>
     </aside>
