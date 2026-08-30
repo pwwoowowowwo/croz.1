@@ -441,7 +441,8 @@
             color: white !important;
         }
 
-        .cal-day .date-num { font-weight: 900; font-size: 13px; color: #2f3640; }
+        .cal-day .date-num { font-weight: 900; font-size: 12px; color: #2f3640; }
+        .cal-day .hijri-sub { font-size: 9px; opacity: 0.85; margin-bottom: 2px; }
         .cal-day .booking-info-tags { font-size: 10px; font-weight: 700; margin-top: 2px; }
 
         .legend-box {
@@ -594,7 +595,7 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0mm; /* تصفير الهوامش تماماً لإخفاء روابط وعناوين المتصفح */
+                margin: 0mm;
             }
             body {
                 background: white !important;
@@ -752,7 +753,7 @@
                         <thead>
                             <tr>
                                 <th>المستأجر</th>
-                                <th>التاريخ</th>
+                                <th>التاريخ (ميلادي / هجري)</th>
                                 <th>القسم</th>
                                 <th>الإيجار</th>
                                 <th>المتبقي</th>
@@ -906,7 +907,7 @@
                                 <th>#</th>
                                 <th>المستأجر</th>
                                 <th>الجوال</th>
-                                <th>التاريخ</th>
+                                <th>تاريخ الحجز (ميلادي / هجري)</th>
                                 <th>الفترة</th>
                                 <th>القسم</th>
                                 <th>الإيجار</th>
@@ -963,7 +964,7 @@
                                 <th>البند</th>
                                 <th>التصنيف</th>
                                 <th>المبلغ</th>
-                                <th>التاريخ</th>
+                                <th>التاريخ (ميلادي / هجري)</th>
                                 <th>إجراء</th>
                             </tr>
                         </thead>
@@ -1069,6 +1070,24 @@
     </div>
 
     <script>
+        // دالة مساعدة لدمج وتوليد التاريخ الهجري والميلادي معاً لأي تاريخ مدخل
+        function formatDualDate(dateStr) {
+            if (!dateStr) return '';
+            try {
+                let d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                let gregFormatted = d.toLocaleDateString('en-GB'); // YYYY-MM-DD or DD/MM/YYYY
+                let hijriFormatted = d.toLocaleDateString('ar-SA-u-ca-islamic-umalqura', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                return `${dateStr} (${hijriFormatted})`;
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 let splash = document.getElementById('splash-screen');
@@ -1281,7 +1300,7 @@
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><b>${b.name}</b></td>
-                    <td>${b.date}</td>
+                    <td>${formatDualDate(b.date)}</td>
                     <td><span class="badge nisah">${b.section}</span></td>
                     <td>${b.price} ر.س</td>
                     <td style="color: #c62828; font-weight: bold;">${rem} ر.س</td>
@@ -1302,7 +1321,7 @@
                     <td>${index + 1}</td>
                     <td><b>${b.name}</b></td>
                     <td>${b.phone}</td>
-                    <td>${b.date}</td>
+                    <td>${formatDualDate(b.date)}</td>
                     <td>${b.period}</td>
                     <td><span class="badge ${badgeClass}">${b.section}</span></td>
                     <td>${b.price} ر.س</td>
@@ -1328,7 +1347,7 @@
                     <td><b>${e.title}</b></td>
                     <td>${e.category}</td>
                     <td style="color: #c62828; font-weight: bold;">${e.amount} ر.س</td>
-                    <td>${e.date}</td>
+                    <td>${formatDualDate(e.date)}</td>
                     <td><button onclick='deleteExpense(${e.id})' class="btn badge danger" style="padding: 5px 8px; border:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
@@ -1371,6 +1390,12 @@
                 let dFormatted = i < 10 ? '0' + i : i;
                 let dayStr = `2026-${mFormatted}-${dFormatted}`;
                 
+                let dObj = new Date(dayStr);
+                let hijriDayStr = '';
+                try {
+                    hijriDayStr = dObj.toLocaleDateString('ar-SA-u-ca-islamic-umalqura', { day: 'numeric', month: 'short' });
+                } catch(e) { hijriDayStr = ''; }
+
                 let dayBookings = bookings.filter(b => b.date === dayStr);
                 
                 let dayDiv = document.createElement('div');
@@ -1391,7 +1416,9 @@
                 
                 dayDiv.className = className;
                 dayDiv.innerHTML = `
-                    <div class="date-num">${i}</div>
+                    <div>
+                        <div class="date-num">${i} <span style="font-weight: normal; font-size: 10px;">(${hijriDayStr})</span></div>
+                    </div>
                     <div class="booking-info-tags">${infoHtml}</div>
                 `;
 
@@ -1414,11 +1441,12 @@
             let content = document.getElementById('calendar-details-content');
             box.style.display = 'block';
 
+            let dualDateStr = formatDualDate(checkDate);
             if(matchedBookings.length === 0) {
-                content.innerHTML = `<b style="color: #2ed573;"><i class="fa-solid fa-circle-check"></i> التاريخ (${checkDate}) متاح تماماً للحجز (لا توجد أي حجوزات مسبقة)!</b>`;
+                content.innerHTML = `<b style="color: #2ed573;"><i class="fa-solid fa-circle-check"></i> التاريخ (${dualDateStr}) متاح تماماً للحجز (لا توجد أي حجوزات مسبقة)!</b>`;
             } else {
                 let hasFull = matchedBookings.some(b => b.section === 'قسمين');
-                let html = `<b style="color: #c62828;"><i class="fa-solid fa-triangle-exclamation"></i> التاريخ (${checkDate}) محجوز كالتالي:</b><br><br>`;
+                let html = `<b style="color: #c62828;"><i class="fa-solid fa-triangle-exclamation"></i> التاريخ (${dualDateStr}) محجوز كالتالي:</b><br><br>`;
                 matchedBookings.forEach(b => {
                     html += `• المستأجر: <b>${b.name}</b> | القسم: <span class="badge nisah">${b.section}</span> | الفترة: ${b.period} | الحالة: ${b.status}<br>`;
                 });
@@ -1434,7 +1462,8 @@
             let content = document.getElementById('calendar-details-content');
             box.style.display = 'block';
             
-            let html = `<b>تفاصيل تاريخ: ${dateStr}</b><br><hr style="margin: 5px 0;">`;
+            let dualDateStr = formatDualDate(dateStr);
+            let html = `<b>تفاصيل التاريخ: ${dualDateStr}</b><br><hr style="margin: 5px 0;">`;
             dayBookings.forEach(b => {
                 let rem = b.price - b.paid;
                 html += `
@@ -1456,7 +1485,7 @@
             document.getElementById('inv-print-date').innerText = currentDateTimeStr;
             document.getElementById('inv-client-name').innerText = b.name;
             document.getElementById('inv-client-phone').innerText = b.phone;
-            document.getElementById('inv-booking-date').innerText = b.date;
+            document.getElementById('inv-booking-date').innerText = formatDualDate(b.date);
             document.getElementById('inv-booking-period').innerText = b.period;
             
             document.getElementById('inv-section').innerText = b.section;
@@ -1479,7 +1508,7 @@
         function sendWhatsApp() {
             if(!activeReceipt) return;
             let rem = activeReceipt.price - activeReceipt.paid;
-            let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${activeReceipt.date} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س (طريقة الدفع: ${activeReceipt.method || 'تحويل بنكي'})\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\n*سياسة العربون والتأمين:* العربون المدفوع يؤكد الحجز ويُخصم من الإيجار، ويُسترد في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر. مبلغ التأمين يُؤخذ قبل الدخول ويُسترد في حال عدم وجود تلفيات أو حوادث.\n\nنتشرف بزيارتكم!`;
+            let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${formatDualDate(activeReceipt.date)} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س (طريقة الدفع: ${activeReceipt.method || 'تحويل بنكي'})\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\n*سياسة العربون والتأمين:* العربون المدفوع يؤكد الحجز ويُخصم من الإيجار، ويُسترد في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر. مبلغ التأمين يُؤخذ قبل الدخول ويُسترد في حال عدم وجود تلفيات أو حوادث.\n\nنتشرف بزيارتكم!`;
             let url = `https://wa.me/${activeReceipt.phone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
@@ -1497,7 +1526,7 @@
             document.getElementById('financial-report-content').innerHTML = html;
         }
 
-        // دالة تصدير الإكسل المحدثة بالتنسيق الاحترافي المطلوب للإدارة
+        // دالة تصدير الإكسل المعدلة والمطورة لتعمل بكفاءة تامة بدون تلف الملف
         function exportToExcel() {
             let currentMonthName = monthNames[currentCalendarMonth];
             let totalExpected = 0;
@@ -1511,7 +1540,6 @@
                 totalPaid += b.paid;
                 totalRemaining += rem;
 
-                // تحديد لون حالة الحجز لتكون مميزة واحترافية
                 let statusBg = '#e1f5fe';
                 let statusColor = '#0288d1';
                 if(b.status === 'مؤكد') {
@@ -1524,45 +1552,56 @@
 
                 rowsHTML += `
                     <tr>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px;">${index + 1}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: right; padding: 6px; font-weight: bold;">${b.name}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">${index + 1}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: right; padding: 6px; font-weight: bold; mso-number-format:'\@';">${b.name}</td>
                         <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">&nbsp;${b.phone}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px;">${b.date}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px;">${b.period}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: #f8f9fa;">${b.section}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #2f3640; font-weight: bold;">${b.price} ر.س</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #10ac84; font-weight: bold;">${b.paid} ر.س</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #c62828; font-weight: bold;">${rem} ر.س</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: ${statusBg}; color: ${statusColor}; font-weight: bold;">${b.status}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">${formatDualDate(b.date)}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">${b.period}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: #f8f9fa; mso-number-format:'\@';">${b.section}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #2f3640; font-weight: bold; mso-number-format:'\#,##0';">${b.price}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #10ac84; font-weight: bold; mso-number-format:'\#,##0';">${b.paid}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #c62828; font-weight: bold; mso-number-format:'\#,##0';">${rem}</td>
+                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: ${statusBg}; color: ${statusColor}; font-weight: bold; mso-number-format:'\@';">${b.status}</td>
                     </tr>
                 `;
             });
 
             let tableHTML = `
-                <html dir="rtl">
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
                 <head>
                     <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                     <x:ExcelWorkbook>
+                      <x:ExcelWorksheets>
+                       <x:ExcelWorksheet>
+                        <x:Name>سجل الحجوزات</x:Name>
+                        <x:WorksheetOptions>
+                         <x:DisplayGridlines/>
+                        </x:WorksheetOptions>
+                       </x:ExcelWorksheet>
+                      </x:ExcelWorksheets>
+                     </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
                     <style>
                         body { font-family: 'Cairo', Tahoma, sans-serif; }
                         table { border-collapse: collapse; width: 100%; }
                     </style>
                 </head>
-                <body>
+                <body dir="rtl">
                     <table>
-                        <!-- صف العنوان المدمج الاحترافي -->
                         <tr>
                             <td colspan="10" style="background-color: #1e272e; color: #ff9f43; font-size: 16px; font-weight: bold; text-align: center; padding: 12px; border: 1px solid #1e272e;">
-                                حجز حجوزات شاليه كروز بشاليه شهر ${currentMonthName} 2026
+                                سجل حجوزات شاليه كروز لشهر ${currentMonthName} 2026
                             </td>
                         </tr>
-                        <!-- صف فارغ فاصل -->
                         <tr><td colspan="10" style="border: none;"></td></tr>
-                        <!-- ترويسة الجدول -->
                         <tr>
                             <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">م</th>
                             <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: right; font-weight: bold;">اسم المستأجر</th>
                             <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">رقم الجوال</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">تاريخ الحجز</th>
+                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">تاريخ الحجز (ميلادي / هجري)</th>
                             <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">الفترة</th>
                             <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">القسم</th>
                             <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">إجمالي الإيجار</th>
@@ -1573,12 +1612,11 @@
                         
                         ${rowsHTML}
 
-                        <!-- صف الإجماليات المميزة في الأسفل -->
                         <tr style="background-color: #f1f2f6; font-weight: bold;">
-                            <td colspan="6" style="border: 2px solid #b2bec3; text-align: left; padding: 8px;">إجمالي المبلغ:</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #2f3640;">${totalExpected} ر.س</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #10ac84;">${totalPaid} ر.س</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #c62828;">${totalRemaining} ر.س</td>
+                            <td colspan="6" style="border: 2px solid #b2bec3; text-align: left; padding: 8px;">إجمالي المبالغ:</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #2f3640; mso-number-format:'\#,##0';">${totalExpected}</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #10ac84; mso-number-format:'\#,##0';">${totalPaid}</td>
+                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #c62828; mso-number-format:'\#,##0';">${totalRemaining}</td>
                             <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px;">-</td>
                         </tr>
                     </table>
@@ -1586,10 +1624,10 @@
                 </html>
             `;
 
-            let blob = new Blob([tableHTML], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;' });
+            let blob = new Blob(['\ufeff' + tableHTML], { type: 'application/vnd.ms-excel;charset=utf-8;' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xlsx`;
+            link.download = `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xls`;
             link.click();
         }
 
@@ -1603,7 +1641,9 @@
         }
 
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date-badge').innerText = new Date().toLocaleDateString('ar-SA', options);
+        let currentDateHijri = new Date().toLocaleDateString('ar-SA-u-ca-islamic-umalqura', options);
+        let currentDateGregorian = new Date().toLocaleDateString('ar-SA', options);
+        document.getElementById('current-date-badge').innerText = `${currentDateGregorian} | ${currentDateHijri}`;
         saveAndRefresh();
     </script>
 </body>
