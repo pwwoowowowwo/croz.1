@@ -147,7 +147,7 @@
             text-align: center;
         }
 
-        /* المحتوى الرئيسي */
+        /* المحتوى الرئيسي مع تثبيت الترويسة */
         main {
             flex-grow: 1;
             padding: 20px 25px;
@@ -159,6 +159,11 @@
         }
 
         .header-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--light-bg);
+            padding-bottom: 10px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -478,7 +483,6 @@
             position: relative;
         }
 
-        /* تنسيق فاتورة / سند تأكيد الحجز المخصص لمقاس A4 ودقة الطباعة */
         .invoice-print-container {
             background: #fff;
             color: #2f3640;
@@ -582,7 +586,6 @@
             line-height: 1.4;
         }
 
-        /* تحكم برمجى للطباعة بحيث تطبع مقاس A4 حصراً وبدون الشاشة الكلية */
         @media print {
             @page {
                 size: A4 portrait;
@@ -1060,7 +1063,7 @@
         ];
 
         let activeReceipt = null;
-        let currentCalendarMonth = 5; // يونيو افتراضياً (0-11)
+        let currentCalendarMonth = 5; 
         const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 
         function switchTab(tabId, element) {
@@ -1077,7 +1080,6 @@
             document.getElementById('sidebar').classList.toggle('hidden');
         }
 
-        // إغلاق القائمة عند النقر في أي مكان خارجها
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const menuToggleBtn = document.getElementById('menuToggleBtn');
@@ -1555,7 +1557,7 @@
                             <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${b.price}</Data></Cell>
                             <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${b.paid}</Data></Cell>
                             <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${rem}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.status}</Data></Cell>
+                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.status}</Data></>
                         </Row>`;
             });
 
