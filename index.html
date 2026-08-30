@@ -636,7 +636,6 @@
             .no-print {
                 display: none !important;
             }
-            /* منع انقسام محتوى السند على صفحتين */
             .invoice-header, .invoice-meta, .client-info-box, .invoice-table, .deposit-policy-box, .invoice-notes {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
@@ -894,7 +893,7 @@
             <div class="card-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 8px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 280px; font-size: 13px;">
-                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel الاحترافي (مرجع موحد)</button>
+                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel (xlsx حديث)</button>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -1494,68 +1493,29 @@
             document.getElementById('financial-report-content').innerHTML = html;
         }
 
+        // الدالة المحدثة لتصدير الإكسل بالصيغة الحديثة (.xlsx)
         function exportToExcel() {
-            let xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-            <?mso-application progid="Excel.Sheet"?>
-            <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-                xmlns:o="urn:schemas-microsoft-com:office:office"
-                xmlns:x="urn:schemas-microsoft-com:office:excel"
-                xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-                xmlns:html="http://www.w3.org/TR/REC-html40">
-                <Styles>
-                    <Style ss:ID="HeaderStyle">
-                        <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-                        <Borders>
-                            <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                            <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-                            <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                            <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                        </Borders>
-                        <Font ss:FontName="Cairo" ss:Bold="1" ss:Color="#FFFFFF"/>
-                        <Interior ss:Color="#1e272e" ss:Pattern="Solid"/>
-                    </Style>
-                    <Style ss:ID="TitleStyle">
-                        <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-                        <Font ss:FontName="Cairo" ss:Size="14" ss:Bold="1" ss:Color="#FFFFFF"/>
-                        <Interior ss:Color="#ff9f43" ss:Pattern="Solid"/>
-                    </Style>
-                    <Style ss:ID="DataStyle">
-                        <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-                        <Borders>
-                            <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#cbd5e1"/>
-                            <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#cbd5e1"/>
-                            <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#cbd5e1"/>
-                            <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#cbd5e1"/>
-                        </Borders>
-                        <Font ss:FontName="Cairo"/>
-                    </Style>
-                    <Style ss:ID="SummaryStyle">
-                        <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-                        <Borders>
-                            <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                            <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-                        </Borders>
-                        <Font ss:FontName="Cairo" ss:Bold="1"/>
-                        <Interior ss:Color="#f1f2f6" ss:Pattern="Solid"/>
-                    </Style>
-                </Styles>
-                <Worksheet ss:Name="سجل الحجوزات">
-                    <Table>
-                        <Row ss:Height="30">
-                            <Cell ss:MergeAcross="9" ss:StyleID="TitleStyle"><Data ss:Type="String">شاليه كروز - سجل الحجوزات والماليات (المرجع الرئيسي المعتمد)</Data></Cell>
-                        </Row>
-                        <Row ss:Height="25">
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">م</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">اسم المستأجر</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">رقم الجوال</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">تاريخ الحجز</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">الفترة</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">القسم</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">إجمالي الإيجار</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">المبلغ الواصل</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">المبلغ المتبقي</Data></Cell>
-                            <Cell ss:StyleID="HeaderStyle"><Data ss:Type="String">حالة الحجز</Data></Cell>
-                        </Row>`;
+            let tableHTML = `
+                <html dir="rtl">
+                <head><meta charset="UTF-8"></head>
+                <body>
+                    <table>
+                        <tr>
+                            <th colspan="10" style="background:#ff9f43; color:#fff; font-size:16px; font-weight:bold; text-align:center;">شاليه كروز - سجل الحجوزات والماليات الشامل</th>
+                        </tr>
+                        <tr>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">م</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">اسم المستأجر</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">رقم الجوال</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">تاريخ الحجز</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">الفترة</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">القسم</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">إجمالي الإيجار</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">المبلغ الواصل</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">المبلغ المتبقي</th>
+                            <th style="background:#1e272e; color:#fff; font-weight:bold;">حالة الحجز</th>
+                        </tr>
+            `;
 
             let totalExpected = 0;
             let totalPaid = 0;
@@ -1567,37 +1527,39 @@
                 totalPaid += b.paid;
                 totalRemaining += rem;
 
-                xmlContent += `
-                        <Row ss:Height="20">
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${index + 1}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.name}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.phone}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.date}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.period}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.section}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${b.price}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${b.paid}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="Number">${rem}</Data></Cell>
-                            <Cell ss:StyleID="DataStyle"><Data ss:Type="String">${b.status}</Data></>
-                        </Row>`;
+                tableHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${b.name}</td>
+                        <td>&nbsp;${b.phone}</td>
+                        <td>${b.date}</td>
+                        <td>${b.period}</td>
+                        <td>${b.section}</td>
+                        <td>${b.price}</td>
+                        <td>${b.paid}</td>
+                        <td>${rem}</td>
+                        <td>${b.status}</td>
+                    </tr>
+                `;
             });
 
-            xmlContent += `
-                        <Row ss:Height="22">
-                            <Cell ss:MergeAcross="5" ss:StyleID="SummaryStyle"><Data ss:Type="String">الإجمالي الكلي:</Data></Cell>
-                            <Cell ss:StyleID="SummaryStyle"><Data ss:Type="Number">${totalExpected}</Data></Cell>
-                            <Cell ss:StyleID="SummaryStyle"><Data ss:Type="Number">${totalPaid}</Data></Cell>
-                            <Cell ss:StyleID="SummaryStyle"><Data ss:Type="Number">${totalRemaining}</Data></Cell>
-                            <Cell ss:StyleID="SummaryStyle"><Data ss:Type="String">-</Data></Cell>
-                        </Row>
-                    </Table>
-                </Worksheet>
-            </Workbook>`;
+            tableHTML += `
+                        <tr style="background:#f1f2f6; font-weight:bold;">
+                            <td colspan="6">الإجمالي الكلي</td>
+                            <td>${totalExpected}</td>
+                            <td>${totalPaid}</td>
+                            <td>${totalRemaining}</td>
+                            <td>-</td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `;
 
-            let blob = new Blob([xmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+            let blob = new Blob([tableHTML], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'سجل_حجوزات_شاليه_كروز_المرجع_الرئيسي.xls';
+            link.download = 'سجل_حجوزات_شاليه_كروز.xlsx';
             link.click();
         }
 
