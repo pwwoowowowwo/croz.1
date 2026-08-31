@@ -6,8 +6,12 @@
     <title>شاليه كروز | النظام المالي وإدارة الحجوزات الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة تصدير ملفات الإكسل بصيغة xlsx الحقيقية -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <!-- مكتبة ExcelJS الاحترافية للتنسيق المتقدم للـ Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <!-- مكتبة FileSaver لحفظ الملف من المتصفح -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #FF6B6B, #FF8E53);
@@ -590,11 +594,10 @@
             line-height: 1.3;
         }
 
-        /* تعديلات إخفاء الرابط والهوامش التلقائية عند الطباعة */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0mm; /* إلغاء هوامش المتصفح الافتراضية لمنع ظهور الرابط والتاريخ ورقم الصفحة */
+                margin: 0mm;
             }
             body {
                 background: white !important;
@@ -899,7 +902,7 @@
             <div class="card-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 8px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 280px; font-size: 13px;">
-                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel (xlsx حديث)</button>
+                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel (تنسيق احترافي)</button>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -1524,10 +1527,49 @@
             document.getElementById('financial-report-content').innerHTML = html;
         }
 
-        function exportToExcel() {
+        /* دالة تصدير Excel المتقدمة والاحترافية جداً باستخدام ExcelJS */
+        async function exportToExcel() {
             let currentMonthName = monthNames[currentCalendarMonth];
             
-            let excelData = [];
+            // إنشاء ورقة عمل جديدة
+            let workbook = new ExcelJS.Workbook();
+            let worksheet = workbook.addWorksheet(`حجوزات ${currentMonthName}`, {
+                views: [{ rtl: true }], // تفعيل اتجاه اليمين لليسار
+                pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1 } // إعدادات طباعة احترافية على A4
+            });
+
+            // 1. صف العنوان الرئيسي المدمج (Row 1 & 2)
+            worksheet.mergeCells('A1:J2');
+            let titleCell = worksheet.getCell('A1');
+            titleCell.value = `سجل الحجوزات لشهر ${currentMonthName} 2026 - شاليه كروز`;
+            titleCell.font = { name: 'Cairo', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+            titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E272E' } }; // كحلي فاخر
+            titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+            // صف فارغ كفاصل
+            worksheet.addRow([]);
+
+            // 2. رؤوس الجدول (Row 4)
+            let headers = [
+                "م", "اسم المستأجر", "رقم الجوال", "تاريخ الحجز (ميلادي / هجري)", 
+                "الفترة", "القسم", "إجمالي الإيجار", "المبلغ الواصل", "المتبقي", "حالة الحجز"
+            ];
+            let headerRow = worksheet.addRow(headers);
+            headerRow.height = 28;
+
+            headerRow.eachCell((cell, colNumber) => {
+                cell.font = { name: 'Cairo', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F3640' } }; // رمادي داكن
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                cell.border = {
+                    top: { style: 'medium', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'medium', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            });
+
+            // 3. إضافة البيانات والتنسيق الشرطي لكل خلية
             let totalExpected = 0;
             let totalPaid = 0;
             let totalRemaining = 0;
@@ -1538,42 +1580,100 @@
                 totalPaid += b.paid;
                 totalRemaining += rem;
 
-                excelData.push({
-                    "م": index + 1,
-                    "اسم المستأجر": b.name,
-                    "رقم الجوال": b.phone,
-                    "تاريخ الحجز": formatDualDate(b.date),
-                    "الفترة": b.period,
-                    "القسم": b.section,
-                    "إجمالي الإيجار": b.price,
-                    "المبلغ الواصل": b.paid,
-                    "المبلغ المتبقي": rem,
-                    "حالة الحجز": b.status
+                let rowData = [
+                    index + 1,
+                    b.name,
+                    b.phone,
+                    formatDualDate(b.date),
+                    b.period,
+                    b.section,
+                    b.price,
+                    b.paid,
+                    rem,
+                    b.status
+                ];
+
+                let row = worksheet.addRow(rowData);
+                row.height = 22;
+
+                row.eachCell((cell, colNumber) => {
+                    // التنسيق العام للخط والحدود الواضحة
+                    cell.font = { name: 'Cairo', size: 10, bold: (colNumber >= 7 && colNumber <= 9) };
+                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: 'FFB0BEC5' } },
+                        left: { style: 'thin', color: { argb: 'FFB0BEC5' } },
+                        bottom: { style: 'thin', color: { argb: 'FFB0BEC5' } },
+                        right: { style: 'thin', color: { argb: 'FFB0BEC5' } }
+                    };
+
+                    // تلوين خاص لأعمدة المبالغ (الإيجار، الواصل، المتبقي)
+                    if (colNumber >= 7 && colNumber <= 9) {
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2CC' } }; // أصفر هادئ مميز
+                        cell.numFmt = '#,##0" ر.س"';
+                    }
+
+                    // تلوين شرطي لحالة الحجز
+                    if (colNumber === 10) {
+                        if (b.status === 'مؤكد') {
+                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } }; // أخضر فاتح
+                            cell.font = { color: { argb: 'FF375623' }, bold: true };
+                        } else {
+                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFCE4D6' } }; // برتقالي/وردي فاتح
+                            cell.font = { color: { argb: 'FFC65911' }, bold: true };
+                        }
+                    }
                 });
             });
 
-            excelData.push({
-                "م": "",
-                "اسم المستأجر": "الإجمالي النهائي",
-                "رقم الجوال": "",
-                "تاريخ الحجز": "",
-                "الفترة": "",
-                "القسم": "",
-                "إجمالي الإيجار": totalExpected,
-                "المبلغ الواصل": totalPaid,
-                "المبلغ المتبقي": totalRemaining,
-                "حالة الحجز": ""
+            // 4. صف المجموع النهائي المصمم باحترافية
+            let totalRowIndex = worksheet.lastRow.number + 1;
+            
+            // دمج الخلايا الأولى حتى عمود الفترة (A - E)
+            worksheet.mergeCells(`A${totalRowIndex}:E${totalRowIndex}`);
+            
+            let totalRow = worksheet.getRow(totalRowIndex);
+            totalRow.height = 26;
+
+            let mergedLabelCell = worksheet.getCell(`A${totalRowIndex}`);
+            mergedLabelCell.value = "المجموع الإجمالي النهائي";
+            mergedLabelCell.font = { name: 'Cairo', size: 11, bold: true, color: { argb: 'FF1E272E' } };
+            mergedLabelCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+            // تعبئة قيم المجموع
+            worksheet.getCell(`F${totalRowIndex}`).value = ""; // خلية القسم فارغة
+            worksheet.getCell(`G${totalRowIndex}`).value = totalExpected;
+            worksheet.getCell(`H${totalRowIndex}`).value = totalPaid;
+            worksheet.getCell(`I${totalRowIndex}`).value = totalRemaining;
+            worksheet.getCell(`J${totalRowIndex}`).value = ""; // خلية الحالة فارغة
+
+            // تنسيق صف المجموع كاملاً
+            totalRow.eachCell((cell, colNumber) => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } }; // لون مميز للمجموع (أزرق رمادي)
+                cell.font = { name: 'Cairo', size: 11, bold: true, color: { argb: 'FF000000' } };
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                cell.border = {
+                    top: { style: 'medium', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'double', color: { argb: 'FF000000' } }, // خط مزدوج في الأسفل لتأكيد المجموع
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+
+                if (colNumber >= 7 && colNumber <= 9) {
+                    cell.numFmt = '#,##0" ر.س"';
+                }
             });
 
-            let worksheet = XLSX.utils.json_to_sheet(excelData);
-            
-            if(!worksheet['!views']) worksheet['!views'] = [];
-            worksheet['!views'].push({ RTL: true });
+            // 5. ضبط عرض الأعمدة تلقائياً ليكون المتصفح والطباعة ممتازة
+            worksheet.columns.forEach((column, index) => {
+                let colLengths = [6, 22, 16, 28, 12, 15, 16, 16, 16, 15];
+                column.width = colLengths[index] || 15;
+            });
 
-            let workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, `حجوزات ${currentMonthName}`);
-
-            XLSX.writeFile(workbook, `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xlsx`);
+            // 6. إنتاج وحفظ الملف
+            let buffer = await workbook.xlsx.writeBuffer();
+            let blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, `سجل_حجوزات_شاليه_كروز_${currentMonthName}_2026.xlsx`);
         }
 
         function exportDataJSON() {
