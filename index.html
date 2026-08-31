@@ -1622,7 +1622,7 @@
             let blob = new Blob(['\ufeff' + tableHTML], { type: 'application/vnd.ms-excel;charset=utf-8;' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xls`;
+            link.download = `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xlsx`;
             link.click();
         }
 
