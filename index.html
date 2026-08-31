@@ -9,6 +9,8 @@
     
     <!-- مكتبة ExcelJS الاحترافية للتنسيق المتقدم للـ Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <!-- مكتبة SheetJS لقراءة واستيراد ملفات الـ Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- مكتبة FileSaver لحفظ الملف من المتصفح -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -902,7 +904,15 @@
             <div class="card-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 8px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 280px; font-size: 13px;">
-                    <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel (تنسيق احترافي)</button>
+                    
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel (تنسيق احترافي)</button>
+                        
+                        <label class="btn" style="background: #10ac84; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-file-excel"></i> استيراد ملف Excel
+                            <input type="file" id="import-excel-file" onchange="importFromExcel(event)" style="display: none;" accept=".xlsx, .xls, .csv">
+                        </label>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -988,12 +998,13 @@
 
         <div id="backup" class="tab-content">
             <div class="card-box">
-                <h3>النسخ الاحتياطي والأمان</h3>
-                <p style="font-size: 13px; color: #718093; margin-bottom: 20px;">يمكنك الاحتفاظ بنسخة محلية من كافة بياناتك واستعادتها في أي وقت لضمان الأمان.</p>
+                <h3>النسخ الاحتياطي والأمان والاسترداد</h3>
+                <p style="font-size: 13px; color: #718093; margin-bottom: 20px;">يمكنك الاحتفاظ بنسخة محلية من كافة بياناتك واستعادتها في أي وقت عبر ملفات النسخ الاحتياطي لضمان عدم ضياع أي حسابات.</p>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button onclick="exportDataJSON()" class="btn btn-success"><i class="fa-solid fa-download"></i> تصدير نسخة احتياطية باسم البرنامج</button>
+                    <button onclick="exportDataJSON()" class="btn btn-success"><i class="fa-solid fa-download"></i> تصدير نسخة JSON احتياطية</button>
+                    
                     <label class="btn btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-upload"></i> استعادة البيانات
+                        <i class="fa-solid fa-upload"></i> استعادة نسخة JSON
                         <input type="file" id="import-file" onchange="importDataJSON(event)" style="display: none;" accept=".json">
                     </label>
                 </div>
@@ -1273,10 +1284,10 @@
                 return e.date.startsWith('2026');
             });
 
-            let expected = filteredBookings.reduce((sum, b) => sum + b.price, 0);
-            let collected = filteredBookings.reduce((sum, b) => sum + b.paid, 0);
+            let expected = filteredBookings.reduce((sum, b) => sum + (parseFloat(b.price) || 0), 0);
+            let collected = filteredBookings.reduce((sum, b) => sum + (parseFloat(b.paid) || 0), 0);
             let remaining = expected - collected;
-            let totalExp = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+            let totalExp = filteredExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
             let net = collected - totalExp;
 
             document.getElementById('stat-expected').innerText = expected.toLocaleString() + ' ر.س';
@@ -1297,7 +1308,7 @@
             let recentBody = document.getElementById('dashboard-recent-body');
             recentBody.innerHTML = '';
             bookings.slice(-4).reverse().forEach(b => {
-                let rem = b.price - b.paid;
+                let rem = (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0);
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><b>${b.name}</b></td>
@@ -1315,7 +1326,7 @@
             let tbody = document.getElementById('bookings-table-body');
             tbody.innerHTML = '';
             bookings.forEach((b, index) => {
-                let rem = b.price - b.paid;
+                let rem = (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0);
                 let badgeClass = b.section === 'نساء' ? 'nisah' : (b.section === 'رجال' ? 'rijal' : 'qismain');
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1466,7 +1477,7 @@
             let dualDateStr = formatDualDate(dateStr);
             let html = `<b>تفاصيل التاريخ: ${dualDateStr}</b><br><hr style="margin: 5px 0;">`;
             dayBookings.forEach(b => {
-                let rem = b.price - b.paid;
+                let rem = (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0);
                 html += `
                     • المستأجر: <b>${b.name}</b> (${b.phone})<br>
                     • القسم المحجوز: <span class="badge nisah">${b.section}</span> | الفترة: ${b.period}<br>
@@ -1493,7 +1504,7 @@
             document.getElementById('inv-price').innerText = b.price + ' ر.س';
             document.getElementById('inv-paid').innerText = b.paid + ' ر.س';
             document.getElementById('inv-method').innerText = b.method || 'تحويل بنكي';
-            document.getElementById('inv-rem').innerText = (b.price - b.paid) + ' ر.س';
+            document.getElementById('inv-rem').innerText = ((parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0)) + ' ر.س';
             
             let badgeEl = document.getElementById('inv-status-badge');
             badgeEl.innerText = b.status;
@@ -1508,15 +1519,15 @@
 
         function sendWhatsApp() {
             if(!activeReceipt) return;
-            let rem = activeReceipt.price - activeReceipt.paid;
+            let rem = (parseFloat(activeReceipt.price) || 0) - (parseFloat(activeReceipt.paid) || 0);
             let msg = `*شاليه كروز - سند تأكيد حجز*\n\nعزيزي المستأجر: ${activeReceipt.name}\nتاريخ الحجز: ${formatDualDate(activeReceipt.date)} (${activeReceipt.period})\nالقسم: ${activeReceipt.section}\nالمبلغ كامل: ${activeReceipt.price} ر.س\nالمدفوع (العربون): ${activeReceipt.paid} ر.س (طريقة الدفع: ${activeReceipt.method || 'تحويل بنكي'})\nالمتبقي: ${rem} ر.س\nالحالة: ${activeReceipt.status}\n\n*سياسة العربون والتأمين:* العربون المدفوع يؤكد الحجز ويُخصم من الإيجار، ويُسترد في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر. مبلغ التأمين يُؤخذ قبل الدخول ويُسترد في حال عدم وجود تلفيات أو حوادث.\n\nنتشرف بزيارتكم!`;
             let url = `https://wa.me/${activeReceipt.phone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
 
         function generateReport() {
-            let totalExp = expenses.reduce((sum, e) => sum + e.amount, 0);
-            let totalInc = bookings.reduce((sum, b) => sum + b.paid, 0);
+            let totalExp = expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+            let totalInc = bookings.reduce((sum, b) => sum + (parseFloat(b.paid) || 0), 0);
             let html = `
                 <b>إجمالي الحجوزات المسجلة:</b> ${bookings.length} حجزاً<br>
                 <b>إجمالي العوائد الفعلية (الواصل):</b> ${totalInc.toLocaleString()} ر.س<br>
@@ -1531,25 +1542,21 @@
         async function exportToExcel() {
             let currentMonthName = monthNames[currentCalendarMonth];
             
-            // إنشاء ورقة عمل جديدة
             let workbook = new ExcelJS.Workbook();
             let worksheet = workbook.addWorksheet(`حجوزات ${currentMonthName}`, {
-                views: [{ rtl: true }], // تفعيل اتجاه اليمين لليسار
-                pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1 } // إعدادات طباعة احترافية على A4
+                views: [{ rtl: true }],
+                pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1 }
             });
 
-            // 1. صف العنوان الرئيسي المدمج (Row 1 & 2)
             worksheet.mergeCells('A1:J2');
             let titleCell = worksheet.getCell('A1');
             titleCell.value = `سجل الحجوزات لشهر ${currentMonthName} 2026 - شاليه كروز`;
             titleCell.font = { name: 'Cairo', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-            titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E272E' } }; // كحلي فاخر
+            titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E272E' } };
             titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            // صف فارغ كفاصل
             worksheet.addRow([]);
 
-            // 2. رؤوس الجدول (Row 4)
             let headers = [
                 "م", "اسم المستأجر", "رقم الجوال", "تاريخ الحجز (ميلادي / هجري)", 
                 "الفترة", "القسم", "إجمالي الإيجار", "المبلغ الواصل", "المتبقي", "حالة الحجز"
@@ -1557,9 +1564,9 @@
             let headerRow = worksheet.addRow(headers);
             headerRow.height = 28;
 
-            headerRow.eachCell((cell, colNumber) => {
+            headerRow.eachCell((cell) => {
                 cell.font = { name: 'Cairo', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
-                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F3640' } }; // رمادي داكن
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F3640' } };
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
                 cell.border = {
                     top: { style: 'medium', color: { argb: 'FF000000' } },
@@ -1569,15 +1576,16 @@
                 };
             });
 
-            // 3. إضافة البيانات والتنسيق الشرطي لكل خلية
             let totalExpected = 0;
             let totalPaid = 0;
             let totalRemaining = 0;
 
             bookings.forEach((b, index) => {
-                let rem = b.price - b.paid;
-                totalExpected += b.price;
-                totalPaid += b.paid;
+                let priceVal = parseFloat(b.price) || 0;
+                let paidVal = parseFloat(b.paid) || 0;
+                let rem = priceVal - paidVal;
+                totalExpected += priceVal;
+                totalPaid += paidVal;
                 totalRemaining += rem;
 
                 let rowData = [
@@ -1587,8 +1595,8 @@
                     formatDualDate(b.date),
                     b.period,
                     b.section,
-                    b.price,
-                    b.paid,
+                    priceVal,
+                    paidVal,
                     rem,
                     b.status
                 ];
@@ -1597,7 +1605,6 @@
                 row.height = 22;
 
                 row.eachCell((cell, colNumber) => {
-                    // التنسيق العام للخط والحدود الواضحة
                     cell.font = { name: 'Cairo', size: 10, bold: (colNumber >= 7 && colNumber <= 9) };
                     cell.alignment = { vertical: 'middle', horizontal: 'center' };
                     cell.border = {
@@ -1607,29 +1614,24 @@
                         right: { style: 'thin', color: { argb: 'FFB0BEC5' } }
                     };
 
-                    // تلوين خاص لأعمدة المبالغ (الإيجار، الواصل، المتبقي)
                     if (colNumber >= 7 && colNumber <= 9) {
-                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2CC' } }; // أصفر هادئ مميز
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2CC' } };
                         cell.numFmt = '#,##0" ر.س"';
                     }
 
-                    // تلوين شرطي لحالة الحجز
                     if (colNumber === 10) {
                         if (b.status === 'مؤكد') {
-                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } }; // أخضر فاتح
+                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE2EFDA' } };
                             cell.font = { color: { argb: 'FF375623' }, bold: true };
                         } else {
-                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFCE4D6' } }; // برتقالي/وردي فاتح
+                            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFCE4D6' } };
                             cell.font = { color: { argb: 'FFC65911' }, bold: true };
                         }
                     }
                 });
             });
 
-            // 4. صف المجموع النهائي المصمم باحترافية
             let totalRowIndex = worksheet.lastRow.number + 1;
-            
-            // دمج الخلايا الأولى حتى عمود الفترة (A - E)
             worksheet.mergeCells(`A${totalRowIndex}:E${totalRowIndex}`);
             
             let totalRow = worksheet.getRow(totalRowIndex);
@@ -1640,22 +1642,20 @@
             mergedLabelCell.font = { name: 'Cairo', size: 11, bold: true, color: { argb: 'FF1E272E' } };
             mergedLabelCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            // تعبئة قيم المجموع
-            worksheet.getCell(`F${totalRowIndex}`).value = ""; // خلية القسم فارغة
+            worksheet.getCell(`F${totalRowIndex}`).value = "";
             worksheet.getCell(`G${totalRowIndex}`).value = totalExpected;
             worksheet.getCell(`H${totalRowIndex}`).value = totalPaid;
             worksheet.getCell(`I${totalRowIndex}`).value = totalRemaining;
-            worksheet.getCell(`J${totalRowIndex}`).value = ""; // خلية الحالة فارغة
+            worksheet.getCell(`J${totalRowIndex}`).value = "";
 
-            // تنسيق صف المجموع كاملاً
             totalRow.eachCell((cell, colNumber) => {
-                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } }; // لون مميز للمجموع (أزرق رمادي)
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } };
                 cell.font = { name: 'Cairo', size: 11, bold: true, color: { argb: 'FF000000' } };
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
                 cell.border = {
                     top: { style: 'medium', color: { argb: 'FF000000' } },
                     left: { style: 'thin', color: { argb: 'FF000000' } },
-                    bottom: { style: 'double', color: { argb: 'FF000000' } }, // خط مزدوج في الأسفل لتأكيد المجموع
+                    bottom: { style: 'double', color: { argb: 'FF000000' } },
                     right: { style: 'thin', color: { argb: 'FF000000' } }
                 };
 
@@ -1664,16 +1664,92 @@
                 }
             });
 
-            // 5. ضبط عرض الأعمدة تلقائياً ليكون المتصفح والطباعة ممتازة
             worksheet.columns.forEach((column, index) => {
                 let colLengths = [6, 22, 16, 28, 12, 15, 16, 16, 16, 15];
                 column.width = colLengths[index] || 15;
             });
 
-            // 6. إنتاج وحفظ الملف
             let buffer = await workbook.xlsx.writeBuffer();
             let blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             saveAs(blob, `سجل_حجوزات_شاليه_كروز_${currentMonthName}_2026.xlsx`);
+        }
+
+        /* دالة استيراد ملفات Excel وإعادة بناء الحسابات في النظام */
+        function importFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rawJson = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    if (!rawJson || rawJson.length === 0) {
+                        alert("الملف المرفوع فارغ أو غير صالح!");
+                        return;
+                    }
+
+                    let importedBookings = [];
+
+                    rawJson.forEach((row, index) => {
+                        let name = row["اسم المستأجر"] || row["المستأجر"] || row["Name"] || row["name"] || "";
+                        let phone = row["رقم الجوال"] || row["الجوال"] || row["Phone"] || row["phone"] || "";
+                        let rawDate = row["تاريخ الحجز (ميلادي / هجري)"] || row["تاريخ الحجز"] || row["التاريخ"] || row["Date"] || "";
+                        let period = row["الفترة"] || row["Period"] || "مساء";
+                        let section = row["القسم"] || row["Section"] || "قسمين";
+                        let price = parseFloat(row["إجمالي الإيجار"] || row["الإيجار"] || row["Price"] || 0);
+                        let paid = parseFloat(row["المبلغ الواصل"] || row["الواصل"] || row["Paid"] || 0);
+                        let status = row["حالة الحجز"] || row["الحالة"] || row["Status"] || "مؤكد";
+
+                        let dateStr = "";
+                        if (typeof rawDate === "string") {
+                            let match = rawDate.match(/\d{4}-\d{2}-\d{2}/);
+                            if (match) {
+                                dateStr = match[0];
+                            }
+                        }
+
+                        if (!dateStr) {
+                            let today = new Date();
+                            dateStr = today.toISOString().split('T')[0];
+                        }
+
+                        if (name) {
+                            importedBookings.push({
+                                id: Date.now() + index,
+                                name: String(name).trim(),
+                                phone: String(phone).trim(),
+                                date: dateStr,
+                                period: period,
+                                section: section,
+                                price: isNaN(price) ? 0 : price,
+                                paid: isNaN(paid) ? 0 : paid,
+                                method: 'استيراد إكسل',
+                                status: status
+                            });
+                        }
+                    });
+
+                    if (importedBookings.length > 0) {
+                        if (confirm(`تم العثور على ${importedBookings.length} حجز في الملف.\nهل تريد استبدال الحجوزات الحالية بالبيانات الجديدة؟`)) {
+                            bookings = importedBookings;
+                            saveAndRefresh();
+                            alert("تم استرداد الحجوزات الحالية وإعادة الحسبة بنجاح!");
+                        }
+                    } else {
+                        alert("لم يتم العثور على بيانات حجوزات صالحة في ملف Excel المحدد.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("حدث خطأ أثناء قراءة ملف Excel، يرجى التأكد من أن صيغة الملف سليمة.");
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
         }
 
         function exportDataJSON() {
@@ -1683,6 +1759,25 @@
             link.href = URL.createObjectURL(blob);
             link.download = 'نسخة_احتياطية_شاليه_كروز.json';
             link.click();
+        }
+
+        function importDataJSON(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let data = JSON.parse(e.target.result);
+                    if (data.bookings) bookings = data.bookings;
+                    if (data.expenses) expenses = data.expenses;
+                    saveAndRefresh();
+                    alert("تم استعادة كافة البيانات والحسابات من الملف بنجاح!");
+                } catch (err) {
+                    alert("حدث خطأ أثناء قراءة الملف الاحتياطي.");
+                }
+            };
+            reader.readAsText(file);
         }
 
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
