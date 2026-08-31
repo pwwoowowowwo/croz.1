@@ -6,6 +6,8 @@
     <title>شاليه كروز | النظام المالي وإدارة الحجوزات الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة تصدير ملفات الإكسل بصيغة xlsx الحقيقية -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #FF6B6B, #FF8E53);
@@ -1524,106 +1526,54 @@
 
         function exportToExcel() {
             let currentMonthName = monthNames[currentCalendarMonth];
+            
+            let excelData = [];
             let totalExpected = 0;
             let totalPaid = 0;
             let totalRemaining = 0;
 
-            let rowsHTML = '';
             bookings.forEach((b, index) => {
                 let rem = b.price - b.paid;
                 totalExpected += b.price;
                 totalPaid += b.paid;
                 totalRemaining += rem;
 
-                let statusBg = '#e1f5fe';
-                let statusColor = '#0288d1';
-                if(b.status === 'مؤكد') {
-                    statusBg = '#e8f5e9';
-                    statusColor = '#2e7d32';
-                } else if(b.status === 'عربون' || b.status === 'غير مؤكد') {
-                    statusBg = '#fff3e0';
-                    statusColor = '#ef6c00';
-                }
-
-                rowsHTML += `
-                    <tr>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">${index + 1}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: right; padding: 6px; font-weight: bold; mso-number-format:'\@';">${b.name}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">&nbsp;${b.phone}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">${formatDualDate(b.date)}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; mso-number-format:'\@';">${b.period}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: #f8f9fa; mso-number-format:'\@';">${b.section}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #2f3640; font-weight: bold; mso-number-format:'\#,##0';">${b.price}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #10ac84; font-weight: bold; mso-number-format:'\#,##0';">${b.paid}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; color: #c62828; font-weight: bold; mso-number-format:'\#,##0';">${rem}</td>
-                        <td style="border: 1px solid #dcdde1; text-align: center; padding: 6px; background-color: ${statusBg}; color: ${statusColor}; font-weight: bold; mso-number-format:'\@';">${b.status}</td>
-                    </tr>
-                `;
+                excelData.push({
+                    "م": index + 1,
+                    "اسم المستأجر": b.name,
+                    "رقم الجوال": b.phone,
+                    "تاريخ الحجز": formatDualDate(b.date),
+                    "الفترة": b.period,
+                    "القسم": b.section,
+                    "إجمالي الإيجار": b.price,
+                    "المبلغ الواصل": b.paid,
+                    "المبلغ المتبقي": rem,
+                    "حالة الحجز": b.status
+                });
             });
 
-            let tableHTML = `
-                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-                <head>
-                    <meta charset="UTF-8">
-                    <!--[if gte mso 9]>
-                    <xml>
-                     <x:ExcelWorkbook>
-                      <x:ExcelWorksheets>
-                       <x:ExcelWorksheet>
-                        <x:Name>سجل الحجوزات</x:Name>
-                        <x:WorksheetOptions>
-                         <x:DisplayGridlines/>
-                        </x:WorksheetOptions>
-                       </x:ExcelWorksheet>
-                      </x:ExcelWorksheets>
-                     </x:ExcelWorkbook>
-                    </xml>
-                    <![endif]-->
-                    <style>
-                        body { font-family: 'Cairo', Tahoma, sans-serif; }
-                        table { border-collapse: collapse; width: 100%; }
-                    </style>
-                </head>
-                <body dir="rtl">
-                    <table>
-                        <tr>
-                            <td colspan="10" style="background-color: #1e272e; color: #ff9f43; font-size: 16px; font-weight: bold; text-align: center; padding: 12px; border: 1px solid #1e272e;">
-                                سجل حجوزات شاليه كروز لشهر ${currentMonthName} 2026
-                            </td>
-                        </tr>
-                        <tr><td colspan="10" style="border: none;"></td></tr>
-                        <tr>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">م</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: right; font-weight: bold;">اسم المستأجر</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">رقم الجوال</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">تاريخ الحجز (ميلادي / هجري)</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">الفترة</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">القسم</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">إجمالي الإيجار</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">المبلغ الواصل</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">المبلغ المتبقي</th>
-                            <th style="background-color: #ff9f43; color: #ffffff; border: 1px solid #e08e00; padding: 8px; text-align: center; font-weight: bold;">حالة الحجز</th>
-                        </tr>
-                        
-                        ${rowsHTML}
+            excelData.push({
+                "م": "",
+                "اسم المستأجر": "الإجمالي النهائي",
+                "رقم الجوال": "",
+                "تاريخ الحجز": "",
+                "الفترة": "",
+                "القسم": "",
+                "إجمالي الإيجار": totalExpected,
+                "المبلغ الواصل": totalPaid,
+                "المبلغ المتبقي": totalRemaining,
+                "حالة الحجز": ""
+            });
 
-                        <tr style="background-color: #f1f2f6; font-weight: bold;">
-                            <td colspan="6" style="border: 2px solid #b2bec3; text-align: left; padding: 8px;">إجمالي المبالغ:</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #2f3640; mso-number-format:'\#,##0';">${totalExpected}</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #10ac84; mso-number-format:'\#,##0';">${totalPaid}</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px; color: #c62828; mso-number-format:'\#,##0';">${totalRemaining}</td>
-                            <td style="border: 2px solid #b2bec3; text-align: center; padding: 8px;">-</td>
-                        </tr>
-                    </table>
-                </body>
-                </html>
-            `;
+            let worksheet = XLSX.utils.json_to_sheet(excelData);
+            
+            if(!worksheet['!views']) worksheet['!views'] = [];
+            worksheet['!views'].push({ RTL: true });
 
-            let blob = new Blob(['\ufeff' + tableHTML], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-            let link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xlsx`;
-            link.click();
+            let workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, `حجوزات ${currentMonthName}`);
+
+            XLSX.writeFile(workbook, `سجل_حجوزات_شاليه_كروز_${currentMonthName}.xlsx`);
         }
 
         function exportDataJSON() {
