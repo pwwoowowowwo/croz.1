@@ -1674,7 +1674,7 @@
             saveAs(blob, `سجل_حجوزات_شاليه_كروز_${currentMonthName}_2026.xlsx`);
         }
 
-        /* دالة استيراد ملفات Excel وإعادة بناء الحسابات في النظام */
+        /* دالة استيراد ملفات Excel الذكية جداً للتعرف التلقائي على محتوى الخلايا والأسماء والأرقام */
         function importFromExcel(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1686,66 +1686,156 @@
                     const workbook = XLSX.read(data, { type: 'array' });
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
-                    const rawJson = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+                    const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
 
-                    if (!rawJson || rawJson.length === 0) {
+                    if (!rawRows || rawRows.length === 0) {
                         alert("الملف المرفوع فارغ أو غير صالح!");
                         return;
                     }
 
                     let importedBookings = [];
 
-                    rawJson.forEach((row, index) => {
-                        let name = row["اسم المستأجر"] || row["المستأجر"] || row["Name"] || row["name"] || "";
-                        let phone = row["رقم الجوال"] || row["الجوال"] || row["Phone"] || row["phone"] || "";
-                        let rawDate = row["تاريخ الحجز (ميلادي / هجري)"] || row["تاريخ الحجز"] || row["التاريخ"] || row["Date"] || "";
-                        let period = row["الفترة"] || row["Period"] || "مساء";
-                        let section = row["القسم"] || row["Section"] || "قسمين";
-                        let price = parseFloat(row["إجمالي الإيجار"] || row["الإيجار"] || row["Price"] || 0);
-                        let paid = parseFloat(row["المبلغ الواصل"] || row["الواصل"] || row["Paid"] || 0);
-                        let status = row["حالة الحجز"] || row["الحالة"] || row["Status"] || "مؤكد";
+                    // قواعد التعرف المباشر على أسماء الأعمدة في حال وجود هيدر
+                    const columnRules = {
+                        name: ['اسم المستأجر', 'المستأجر', 'الاسم', 'اسم العميل', 'العميل', 'Name', 'name', 'client'],
+                        phone: ['رقم الجوال', 'الجوال', 'الهاتف', 'رقم الهاتف', 'التواصل', 'Phone', 'phone', 'mobile'],
+                        date: ['تاريخ الحجز (ميلادي / هجري)', 'تاريخ الحجز', 'التاريخ', 'تاريخ', 'Date', 'date'],
+                        period: ['الفترة', 'فترة', 'Period', 'period'],
+                        section: ['القسم', 'قسم', 'Section', 'section'],
+                        price: ['إجمالي الإيجار', 'الإيجار', 'السعر', 'المبلغ', 'القيمة', 'Price', 'price', 'total'],
+                        paid: ['المبلغ الواصل', 'الواصل', 'المقدم', 'العربون', 'المدفوع', 'Paid', 'paid'],
+                        status: ['حالة الحجز', 'الحالة', 'Status', 'status']
+                    };
 
-                        let dateStr = "";
-                        if (typeof rawDate === "string") {
-                            let match = rawDate.match(/\d{4}-\d{2}-\d{2}/);
-                            if (match) {
-                                dateStr = match[0];
+                    let headerRowIndex = -1;
+                    let fieldMap = {};
+
+                    // البحث عن سطر الهيدر الرئيسي في أوائل أسطر الملف
+                    for (let i = 0; i < Math.min(rawRows.length, 5); i++) {
+                        let rowStr = rawRows[i].join(' ');
+                        if (columnRules.name.some(k => rowStr.includes(k)) || columnRules.phone.some(k => rowStr.includes(k))) {
+                            headerRowIndex = i;
+                            rawRows[i].forEach((cellText, colIdx) => {
+                                let txt = String(cellText).trim();
+                                for (let [field, aliases] of Object.entries(columnRules)) {
+                                    if (aliases.some(alias => txt.includes(alias))) {
+                                        fieldMap[field] = colIdx;
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                    }
+
+                    const dataRows = headerRowIndex !== -1 ? rawRows.slice(headerRowIndex + 1) : rawRows;
+
+                    dataRows.forEach((row, index) => {
+                        if (!row || row.length === 0 || row.every(c => String(c).trim() === '')) return;
+
+                        let name = '', phone = '', dateStr = '', period = 'مساء', section = 'قسمين', price = 0, paid = 0, status = 'مؤكد';
+                        let numericValues = [];
+
+                        // 1. الاستخراج الذكي بحسب أسماء الأعمدة إذا تم العثور عليها
+                        if (fieldMap.name !== undefined && row[fieldMap.name]) name = String(row[fieldMap.name]).trim();
+                        if (fieldMap.phone !== undefined && row[fieldMap.phone]) phone = String(row[fieldMap.phone]).trim();
+                        if (fieldMap.date !== undefined && row[fieldMap.date]) dateStr = String(row[fieldMap.date]).trim();
+                        if (fieldMap.period !== undefined && row[fieldMap.period]) period = String(row[fieldMap.period]).trim();
+                        if (fieldMap.section !== undefined && row[fieldMap.section]) section = String(row[fieldMap.section]).trim();
+                        if (fieldMap.price !== undefined && !isNaN(parseFloat(row[fieldMap.price]))) price = parseFloat(row[fieldMap.price]);
+                        if (fieldMap.paid !== undefined && !isNaN(parseFloat(row[fieldMap.paid]))) paid = parseFloat(row[fieldMap.paid]);
+                        if (fieldMap.status !== undefined && row[fieldMap.status]) status = String(row[fieldMap.status]).trim();
+
+                        // 2. الفحص النمطي المحتوى الذكي (Fallback Pattern Matcher) لكل خلية
+                        row.forEach(cell => {
+                            let cellVal = String(cell).trim();
+                            if (!cellVal) return;
+
+                            // أ) التعرف على أرقام الجوال (السعودية والخليجية)
+                            let cleanPhone = cellVal.replace(/[\s\-\+]/g, '');
+                            if (!phone && (/^(05|\+?9665|5)\d{8}$/.test(cleanPhone) || (cleanPhone.length >= 9 && cleanPhone.length <= 12 && /^\d+$/.test(cleanPhone)))) {
+                                phone = cleanPhone;
+                                return;
+                            }
+
+                            // ب) التعرف على التاريخ
+                            if (!dateStr) {
+                                let match = cellVal.match(/\d{4}[\-\/]\d{1,2}[\-\/]\d{1,2}/);
+                                if (match) {
+                                    dateStr = match[0].replace(/\//g, '-');
+                                    return;
+                                }
+                            }
+
+                            // ج) التعرف على القسم والفترة والحالة
+                            if (cellVal.includes('نساء')) section = 'نساء';
+                            else if (cellVal.includes('رجال')) section = 'رجال';
+                            else if (cellVal.includes('قسمين')) section = 'قسمين';
+
+                            if (cellVal.includes('صباح')) period = 'صباح';
+                            else if (cellVal.includes('مساء')) period = 'مساء';
+                            else if (cellVal.includes('كامل')) period = 'يوم كامل';
+
+                            if (cellVal.includes('عربون')) status = 'عربون';
+                            else if (cellVal.includes('غير مؤكد') || cellVal.includes('معلق')) status = 'غير مؤكد';
+
+                            // د) التعرف على المبالغ المالية
+                            let num = parseFloat(cellVal.replace(/[^\d.]/g, ''));
+                            if (!isNaN(num) && num > 0 && !/^\d{9,12}$/.test(cellVal)) {
+                                numericValues.push(num);
+                            }
+
+                            // هـ) التعرف الذكي على اسم الشخص
+                            const reservedWords = ['نساء', 'رجال', 'قسمين', 'مساء', 'صباح', 'كامل', 'عربون', 'مؤكد', 'غير مؤكد', 'تحويل', 'كاش', 'شبكة'];
+                            const isArabicName = /^[\u0600-\u06FF\s]+$/.test(cellVal);
+                            if (!name && isArabicName && cellVal.split(' ').length >= 1 && !reservedWords.some(rw => cellVal.includes(rw))) {
+                                name = cellVal;
+                            }
+                        });
+
+                        // توزيع المبالغ المالية المكتشفة إذا لم توجد أعمدة صريحة
+                        if (numericValues.length > 0 && price === 0) {
+                            price = Math.max(...numericValues);
+                            if (numericValues.length > 1) {
+                                paid = Math.min(...numericValues);
+                            } else {
+                                paid = status === 'مؤكد' ? price : price;
                             }
                         }
 
-                        if (!dateStr) {
-                            let today = new Date();
-                            dateStr = today.toISOString().split('T')[0];
+                        // تصحيح التواريخ غير المعرفة بتاريخ اليوم
+                        if (!dateStr || isNaN(new Date(dateStr).getTime())) {
+                            dateStr = new Date().toISOString().split('T')[0];
                         }
 
-                        if (name) {
+                        // إضافة الحجز إذا توفر الاسم أو رقم الجوال
+                        if (name || phone) {
                             importedBookings.push({
                                 id: Date.now() + index,
-                                name: String(name).trim(),
-                                phone: String(phone).trim(),
+                                name: name || 'مستأجر غير مسمى',
+                                phone: phone || '0500000000',
                                 date: dateStr,
                                 period: period,
                                 section: section,
-                                price: isNaN(price) ? 0 : price,
-                                paid: isNaN(paid) ? 0 : paid,
-                                method: 'استيراد إكسل',
+                                price: price,
+                                paid: paid,
+                                method: 'استيراد إكسل ذكي',
                                 status: status
                             });
                         }
                     });
 
                     if (importedBookings.length > 0) {
-                        if (confirm(`تم العثور على ${importedBookings.length} حجز في الملف.\nهل تريد استبدال الحجوزات الحالية بالبيانات الجديدة؟`)) {
+                        if (confirm(`التحليل الذكي: تم العثور على ${importedBookings.length} حجز وتنسيق البيانات بنجاح.\nهل تريد حفظها واحتساب الماليات؟`)) {
                             bookings = importedBookings;
                             saveAndRefresh();
-                            alert("تم استرداد الحجوزات الحالية وإعادة الحسبة بنجاح!");
+                            alert("تم استيراد كافة الحجوزات وتحديث التقويم والمؤشرات المالية بنجاح!");
                         }
                     } else {
-                        alert("لم يتم العثور على بيانات حجوزات صالحة في ملف Excel المحدد.");
+                        alert("لم يتم العثور على بيانات حجوزات صالحة في ملف Excel المرفق.");
                     }
                 } catch (err) {
                     console.error(err);
-                    alert("حدث خطأ أثناء قراءة ملف Excel، يرجى التأكد من أن صيغة الملف سليمة.");
+                    alert("حدث خطأ أثناء قراءة الملف، يرجى التأكد من اختيار ملف Excel صحيح.");
                 }
             };
 
