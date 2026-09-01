@@ -349,6 +349,42 @@
             box-shadow: 0 0 5px rgba(255, 159, 67, 0.3);
         }
 
+        /* تصميم حاوية رقم الجوال الجديد */
+        .phone-wrapper {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 2px solid #dcdde1;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .phone-wrapper:focus-within {
+            border-color: #ff9f43;
+            box-shadow: 0 0 5px rgba(255, 159, 67, 0.3);
+        }
+        .country-code {
+            padding: 9px 12px;
+            background: #f1f2f6;
+            color: #2f3640;
+            font-weight: bold;
+            border-left: 2px solid #dcdde1;
+            direction: ltr;
+            font-size: 13px;
+        }
+        .phone-input {
+            width: 100%;
+            padding: 9px 12px;
+            background: transparent !important;
+            border: none !important;
+            color: #2f3640;
+            outline: none;
+            font-size: 13px;
+            direction: ltr;
+            text-align: right;
+            box-shadow: none !important;
+        }
+
         .btn {
             background: var(--primary-gradient);
             color: white;
@@ -380,8 +416,9 @@
         }
 
         table th, table td {
-            padding: 10px 12px;
+            padding: 14px 12px; /* تم توسيع الأسطر وزيادة مساحتها لراحة الضغط */
             border-bottom: 1px solid #f1f2f6;
+            vertical-align: middle;
         }
 
         table th { background-color: #f8f9fa; color: #2f3640; font-size: 13px; font-weight: 700; }
@@ -761,7 +798,10 @@
                         </div>
                         <div class="form-group">
                             <label>رقم الجوال</label>
-                            <input type="text" id="b-phone" required placeholder="05xxxxxxxx">
+                            <div class="phone-wrapper">
+                                <span class="country-code">+966</span>
+                                <input type="tel" id="b-phone" class="phone-input" placeholder="5xxxxxxxx" maxlength="9" oninput="formatPhoneNumber(this)" required>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>تاريخ الحجز</label>
@@ -1073,8 +1113,8 @@
 
     <script>
         let bookings = JSON.parse(localStorage.getItem('cruise_bookings')) || [
-            { id: 1, name: 'تميم البدحاني', phone: '0501112233', date: '2026-08-10', period: 'مساء', section: 'نساء', price: 600, paid: 100, method: 'تحويل بنكي', status: 'عربون' },
-            { id: 2, name: 'وليد محمد', phone: '0552223344', date: '2026-08-12', period: 'يوم كامل', section: 'قسمين', price: 1200, paid: 1200, method: 'كاش', status: 'مؤكد' }
+            { id: 1, name: 'تميم البدحاني', phone: '501112233', date: '2026-08-10', period: 'مساء', section: 'نساء', price: 600, paid: 100, method: 'تحويل بنكي', status: 'عربون' },
+            { id: 2, name: 'وليد محمد', phone: '552223344', date: '2026-08-12', period: 'يوم كامل', section: 'قسمين', price: 1200, paid: 1200, method: 'كاش', status: 'مؤكد' }
         ];
 
         let expenses = JSON.parse(localStorage.getItem('cruise_expenses')) || [
@@ -1109,6 +1149,18 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeReceiptModal();
         });
+
+        // دالة معالجة الجوال وتنسيقه تلقائياً (إزالة الصفر البادئ أو الرموز الزائدة)
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.startsWith('0')) {
+                value = value.substring(1);
+            }
+            if (value.length > 9) {
+                value = value.substring(0, 9);
+            }
+            input.value = value;
+        }
 
         function formatDualDate(dateStr) {
             if (!dateStr) return '';
@@ -1183,6 +1235,12 @@
             let section = document.getElementById('b-section').value;
             let price = parseFloat(document.getElementById('b-price').value) || 0;
             let paid = parseFloat(document.getElementById('b-paid').value) || 0;
+            let rawPhone = document.getElementById('b-phone').value.trim();
+
+            if (rawPhone.length !== 9 || !rawPhone.startsWith('5')) {
+                alert('الرجاء التأكد من صحة رقم الجوال (يجب أن يتكون من 9 أرقام ويبدأ بـ 5)');
+                return;
+            }
 
             let conflictMsg = checkBookingConflict(date, section, editId);
             if(conflictMsg) {
@@ -1193,7 +1251,7 @@
             let bookingData = {
                 id: editId ? parseInt(editId) : Date.now(),
                 name: document.getElementById('b-name').value.trim(),
-                phone: document.getElementById('b-phone').value.trim(),
+                phone: rawPhone,
                 date: date,
                 period: document.getElementById('b-period').value,
                 section: section,
@@ -1214,6 +1272,8 @@
 
             document.getElementById('b-edit-id').value = '';
             document.getElementById('quick-booking-form').reset();
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('b-date').value = today;
             document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> نموذج تسجيل حجز جديد للشاليه`;
             saveAndRefresh();
             switchTab('dashboard', document.querySelectorAll('.nav-links li')[0]);
@@ -1225,7 +1285,11 @@
             
             document.getElementById('b-edit-id').value = b.id;
             document.getElementById('b-name').value = b.name;
-            document.getElementById('b-phone').value = b.phone;
+            let cleanPhone = b.phone.replace(/\D/g, '');
+            if (cleanPhone.startsWith('966')) cleanPhone = cleanPhone.substring(3);
+            if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
+            document.getElementById('b-phone').value = cleanPhone;
+
             document.getElementById('b-date').value = b.date;
             document.getElementById('b-period').value = b.period;
             document.getElementById('b-section').value = b.section;
@@ -1237,6 +1301,15 @@
 
             document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #ff9f43;"></i> تعديل بيانات الحجز: ${b.name}`;
             switchTab('new-booking', document.querySelectorAll('.nav-links li')[1]);
+        }
+
+        // دالة تأكيد الدفع السريع (تسوية المبلغ بالكامل وتغيير الحالة لمؤكد)
+        function quickMarkAsPaid(id) {
+            let b = bookings.find(item => String(item.id) === String(id));
+            if(!b) return;
+            b.paid = b.price;
+            b.status = 'مؤكد';
+            saveAndRefresh();
         }
 
         function deleteBooking(id) {
@@ -1258,6 +1331,8 @@
             expenses.push(newE);
             saveAndRefresh();
             e.target.reset();
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('e-date').value = today;
             alert('تم تسجيل المصروف بنجاح!');
         }
 
@@ -1334,11 +1409,12 @@
             bookings.forEach((b, index) => {
                 let rem = Math.max(0, (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0));
                 let badgeClass = b.section === 'نساء' ? 'nisah' : (b.section === 'رجال' ? 'rijal' : 'qismain');
+                let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td><b>${b.name}</b></td>
-                    <td>${b.phone}</td>
+                    <td style="direction: ltr; text-align: right;">${displayPhone}</td>
                     <td>${formatDualDate(b.date)}</td>
                     <td>${b.period}</td>
                     <td><span class="badge ${badgeClass}">${b.section}</span></td>
@@ -1347,10 +1423,11 @@
                     <td style="color: #c62828; font-weight: bold;">${rem} ر.س</td>
                     <td><span class="badge ${b.status === 'مؤكد' ? 'success' : 'danger'}">${b.status}</span></td>
                     <td>
-                        <button onclick='editBooking("${b.id}")' class="btn" style="padding: 4px 8px; font-size: 11px; background: #54a0ff;" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick='openReceipt(${JSON.stringify(b)})' class="btn" style="padding: 4px 8px; font-size: 11px;" title="عرض السند"><i class="fa-solid fa-receipt"></i></button>
-                        <button onclick='downloadReceiptPDF("${b.id}")' class="btn" style="padding: 4px 8px; font-size: 11px; background: #eb4d4b;" title="تحميل PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button onclick='deleteBooking("${b.id}")' class="btn badge danger" style="padding: 5px 8px; border:none; cursor:pointer;" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick='quickMarkAsPaid("${b.id}")' class="btn btn-success" style="padding: 5px 10px; font-size: 11px; margin-left: 3px;" title="تأكيد سداد المبلغ كامل"><i class="fa-solid fa-check-double"></i> دفع كامل</button>
+                        <button onclick='editBooking("${b.id}")' class="btn" style="padding: 5px 8px; font-size: 11px; background: #54a0ff; margin-left: 3px;" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick='openReceipt("${JSON.stringify(b).replace(/"/g, '&quot;')}")' class="btn" style="padding: 5px 8px; font-size: 11px; margin-left: 3px;" title="عرض السند"><i class="fa-solid fa-receipt"></i></button>
+                        <button onclick='downloadReceiptPDF("${b.id}")' class="btn" style="padding: 5px 8px; font-size: 11px; background: #eb4d4b; margin-left: 3px;" title="تحميل PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                        <button onclick='deleteBooking("${b.id}")' class="btn badge danger" style="padding: 6px 8px; border:none; cursor:pointer;" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1483,8 +1560,9 @@
             let html = `<b>تفاصيل التاريخ: ${dualDateStr}</b><br><hr style="margin: 5px 0;">`;
             dayBookings.forEach(b => {
                 let rem = Math.max(0, (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0));
+                let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 html += `
-                    • المستأجر: <b>${b.name}</b> (${b.phone})<br>
+                    • المستأجر: <b>${b.name}</b> (${displayPhone})<br>
                     • القسم المحجوز: <span class="badge nisah">${b.section}</span> | الفترة: ${b.period}<br>
                     • الإيجار: ${b.price} ر.س | الواصل: ${b.paid} ر.س | المتبقي: ${rem} ر.س<br>
                     • الحالة: <span class="badge ${b.status === 'مؤكد' ? 'success' : 'danger'}">${b.status}</span><br>
@@ -1494,14 +1572,16 @@
             content.innerHTML = html;
         }
 
-        function openReceipt(b) {
+        function openReceipt(bInput) {
+            let b = typeof bInput === 'string' ? JSON.parse(bInput) : bInput;
             activeReceipt = b;
             let currentDateTimeStr = new Date().toLocaleString('ar-SA');
+            let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
             
             document.getElementById('inv-id').innerText = '#' + b.id;
             document.getElementById('inv-print-date').innerText = currentDateTimeStr;
             document.getElementById('inv-client-name').innerText = b.name;
-            document.getElementById('inv-client-phone').innerText = b.phone;
+            document.getElementById('inv-client-phone').innerText = displayPhone;
             document.getElementById('inv-booking-date').innerText = formatDualDate(b.date);
             document.getElementById('inv-booking-period').innerText = b.period;
             
@@ -1550,11 +1630,12 @@
         function sendWhatsApp() {
             if(!activeReceipt) return;
             
-            // تنظيف الرقم وإضافة رمز الدولة تلقائياً في الرابط مع الإبقاء على الإدخال المحلي العادي
             let cleanPhone = activeReceipt.phone.replace(/\D/g, '');
             if (cleanPhone.startsWith('0')) {
                 cleanPhone = '966' + cleanPhone.substring(1);
             } else if (cleanPhone.length === 9) {
+                cleanPhone = '966' + cleanPhone;
+            } else if (!cleanPhone.startsWith('966')) {
                 cleanPhone = '966' + cleanPhone;
             }
 
@@ -1640,7 +1721,7 @@
                 let valE = b ? b.section : "";
                 let valF = b ? b.period : "";
                 let valG = b ? formatDualDate(b.date) : "";
-                let valH = b ? b.phone : "";
+                let valH = b ? (b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone) : "";
                 let valI = b ? b.name : "";
                 let valJ = b ? (i + 1) : "";
 
@@ -1724,10 +1805,14 @@
                     let importedBookings = [];
                     rawRows.forEach((row, idx) => {
                         if(idx === 0 || !row[0]) return;
+                        let rawPhoneStr = String(row[2] || '').replace(/\D/g, '');
+                        if (rawPhoneStr.startsWith('966')) rawPhoneStr = rawPhoneStr.substring(3);
+                        if (rawPhoneStr.startsWith('0')) rawPhoneStr = rawPhoneStr.substring(1);
+
                         importedBookings.push({
                             id: Date.now() + idx,
-                            name: String(row[1] || 'مستأجر غير مسمى').trim(),
-                            phone: String(row[2] || '').trim(),
+                            name: String(row[1] || 'مستأجر غير مسمى').tr(),
+                            phone: rawPhoneStr || '500000000',
                             date: row[3] || new Date().toISOString().split('T')[0],
                             period: row[4] || 'مساء',
                             section: row[5] || 'قسمين',
