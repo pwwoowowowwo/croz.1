@@ -349,7 +349,6 @@
             box-shadow: 0 0 5px rgba(255, 159, 67, 0.3);
         }
 
-        /* تصميم حاوية رقم الجوال الجديد */
         .phone-wrapper {
             display: flex;
             align-items: center;
@@ -416,7 +415,7 @@
         }
 
         table th, table td {
-            padding: 14px 12px; /* تم توسيع الأسطر وزيادة مساحتها لراحة الضغط */
+            padding: 14px 12px;
             border-bottom: 1px solid #f1f2f6;
             vertical-align: middle;
         }
@@ -1035,7 +1034,7 @@
                 <div class="invoice-header">
                     <h2>شاليه كروز</h2>
                     <p>سند تأكيد حجز رسمي وفاتورة تفصيلية</p>
-                    <p style="margin-top: 4px; font-size: 10px; color: #57606f;">شارع الإمام مسلم | الجوال: 0555686540 📍</p>
+                    <p style="margin-top: 4px; font-size: 10px; color: #57606f;"> شارع الإمام مسلم | الجوال: 0555686540 </p>
                 </div>
 
                 <div class="invoice-meta">
@@ -1150,7 +1149,6 @@
             if (e.key === 'Escape') closeReceiptModal();
         });
 
-        // دالة معالجة الجوال وتنسيقه تلقائياً (إزالة الصفر البادئ أو الرموز الزائدة)
         function formatPhoneNumber(input) {
             let value = input.value.replace(/\D/g, '');
             if (value.startsWith('0')) {
@@ -1303,7 +1301,6 @@
             switchTab('new-booking', document.querySelectorAll('.nav-links li')[1]);
         }
 
-        // دالة تأكيد الدفع السريع (تسوية المبلغ بالكامل وتغيير الحالة لمؤكد)
         function quickMarkAsPaid(id) {
             let b = bookings.find(item => String(item.id) === String(id));
             if(!b) return;
@@ -1411,6 +1408,51 @@
                 let badgeClass = b.section === 'نساء' ? 'nisah' : (b.section === 'رجال' ? 'rijal' : 'qismain');
                 let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 let tr = document.createElement('tr');
+                
+                // تم إصلاح زر السند عبر استدعاء openReceipt بالشكل الصحيح باستخدام الكائن مباشرةً
+                let receiptBtn = document.createElement('button');
+                receiptBtn.className = 'btn';
+                receiptBtn.style.cssText = 'padding: 5px 8px; font-size: 11px; margin-left: 3px;';
+                receiptBtn.title = 'عرض السند';
+                receiptBtn.innerHTML = '<i class="fa-solid fa-receipt"></i>';
+                receiptBtn.onclick = function() { openReceipt(b); };
+
+                let tdActions = document.createElement('td');
+                
+                let btnPay = document.createElement('button');
+                btnPay.className = 'btn btn-success';
+                btnPay.style.cssText = 'padding: 5px 10px; font-size: 11px; margin-left: 3px;';
+                btnPay.title = 'تأكيد سداد المبلغ كامل';
+                btnPay.innerHTML = '<i class="fa-solid fa-check-double"></i> دفع كامل';
+                btnPay.onclick = function() { quickMarkAsPaid(b.id); };
+                tdActions.appendChild(btnPay);
+
+                let btnEdit = document.createElement('button');
+                btnEdit.className = 'btn';
+                btnEdit.style.cssText = 'padding: 5px 8px; font-size: 11px; background: #54a0ff; margin-left: 3px;';
+                btnEdit.title = 'تعديل';
+                btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                btnEdit.onclick = function() { editBooking(b.id); };
+                tdActions.appendChild(btnEdit);
+
+                tdActions.appendChild(receiptBtn);
+
+                let btnPdf = document.createElement('button');
+                btnPdf.className = 'btn';
+                btnPdf.style.cssText = 'padding: 5px 8px; font-size: 11px; background: #eb4d4b; margin-left: 3px;';
+                btnPdf.title = 'تحميل PDF';
+                btnPdf.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+                btnPdf.onclick = function() { downloadReceiptPDF(b.id); };
+                tdActions.appendChild(btnPdf);
+
+                let btnDel = document.createElement('button');
+                btnDel.className = 'btn badge danger';
+                btnDel.style.cssText = 'padding: 6px 8px; border:none; cursor:pointer;';
+                btnDel.title = 'حذف';
+                btnDel.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                btnDel.onclick = function() { deleteBooking(b.id); };
+                tdActions.appendChild(btnDel);
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td><b>${b.name}</b></td>
@@ -1422,14 +1464,8 @@
                     <td style="color: #10ac84; font-weight: bold;">${b.paid} ر.س</td>
                     <td style="color: #c62828; font-weight: bold;">${rem} ر.س</td>
                     <td><span class="badge ${b.status === 'مؤكد' ? 'success' : 'danger'}">${b.status}</span></td>
-                    <td>
-                        <button onclick='quickMarkAsPaid("${b.id}")' class="btn btn-success" style="padding: 5px 10px; font-size: 11px; margin-left: 3px;" title="تأكيد سداد المبلغ كامل"><i class="fa-solid fa-check-double"></i> دفع كامل</button>
-                        <button onclick='editBooking("${b.id}")' class="btn" style="padding: 5px 8px; font-size: 11px; background: #54a0ff; margin-left: 3px;" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick='openReceipt("${JSON.stringify(b).replace(/"/g, '&quot;')}")' class="btn" style="padding: 5px 8px; font-size: 11px; margin-left: 3px;" title="عرض السند"><i class="fa-solid fa-receipt"></i></button>
-                        <button onclick='downloadReceiptPDF("${b.id}")' class="btn" style="padding: 5px 8px; font-size: 11px; background: #eb4d4b; margin-left: 3px;" title="تحميل PDF"><i class="fa-solid fa-file-pdf"></i></button>
-                        <button onclick='deleteBooking("${b.id}")' class="btn badge danger" style="padding: 6px 8px; border:none; cursor:pointer;" title="حذف"><i class="fa-solid fa-trash"></i></button>
-                    </td>
                 `;
+                tr.appendChild(tdActions);
                 tbody.appendChild(tr);
             });
         }
@@ -1602,6 +1638,7 @@
             document.getElementById('receipt-modal').style.display = 'none';
         }
 
+        // تم ربط زر الـ PDF ليقوم بعرض نفس قالب السند والطباعة ومن ثم تحميله مباشرة
         function downloadReceiptPDF(id) {
             let booking = bookings.find(b => String(b.id) === String(id));
             if (!booking) return;
@@ -1811,7 +1848,7 @@
 
                         importedBookings.push({
                             id: Date.now() + idx,
-                            name: String(row[1] || 'مستأجر غير مسمى').tr(),
+                            name: String(row[1] || 'مستأجر غير مسمى').trim(),
                             phone: rawPhoneStr || '500000000',
                             date: row[3] || new Date().toISOString().split('T')[0],
                             period: row[4] || 'مساء',
