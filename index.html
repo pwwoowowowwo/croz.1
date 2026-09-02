@@ -170,7 +170,7 @@
 
         main {
             flex-grow: 1;
-            padding: 20px 25px;
+            padding: 20px 25px 50px 25px; /* تم زيادة الـ padding السفلي لعمل نهاية منظمة للصفحة */
             overflow-y: auto;
             position: relative;
             display: flex;
@@ -179,9 +179,8 @@
         }
 
         .header-container {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            /* تم تعديل الـ position لتتحرك الترويسة مع السحب ولا تظل ثابتة */
+            position: relative;
             background: var(--light-bg);
             padding-bottom: 10px;
             display: flex;
@@ -1405,11 +1404,9 @@
             tbody.innerHTML = '';
             bookings.forEach((b, index) => {
                 let rem = Math.max(0, (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0));
-                let badgeClass = b.section === 'نساء' ? 'nisah' : (b.section === 'رجال' ? 'rijal' : 'qismain');
                 let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 let tr = document.createElement('tr');
                 
-                // تم إصلاح زر السند عبر استدعاء openReceipt بالشكل الصحيح باستخدام الكائن مباشرةً
                 let receiptBtn = document.createElement('button');
                 receiptBtn.className = 'btn';
                 receiptBtn.style.cssText = 'padding: 5px 8px; font-size: 11px; margin-left: 3px;';
@@ -1453,6 +1450,7 @@
                 btnDel.onclick = function() { deleteBooking(b.id); };
                 tdActions.appendChild(btnDel);
 
+                let badgeClass = b.section === 'نساء' ? 'nisah' : (b.section === 'رجال' ? 'rijal' : 'qismain');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td><b>${b.name}</b></td>
@@ -1638,7 +1636,6 @@
             document.getElementById('receipt-modal').style.display = 'none';
         }
 
-        // تم ربط زر الـ PDF ليقوم بعرض نفس قالب السند والطباعة ومن ثم تحميله مباشرة
         function downloadReceiptPDF(id) {
             let booking = bookings.find(b => String(b.id) === String(id));
             if (!booking) return;
