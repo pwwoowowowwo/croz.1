@@ -43,12 +43,34 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        body {
+        html, body {
             background-color: var(--light-bg);
             color: var(--text-main);
+            width: 100%;
+            min-height: 100vh;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* حاوية تتمدد بملء الشاشة بالكامل بدون قيود عرض */
+        .mobile-viewport-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            max-width: 100%;
+            box-shadow: none;
+            border-radius: 0;
+            position: relative;
+            background-color: var(--light-bg);
+            border: none;
+            overflow: visible !important;
         }
 
         #splash-screen {
@@ -65,7 +87,7 @@
         }
 
         .splash-logo {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 900;
             color: #ff9f43;
             margin-bottom: 10px;
@@ -75,10 +97,12 @@
         }
 
         .splash-sub {
-            font-size: 15px;
+            font-size: 14px;
             color: #dcdde1;
             margin-bottom: 30px;
             letter-spacing: 1px;
+            text-align: center;
+            padding: 0 15px;
         }
 
         .loader-ring {
@@ -97,7 +121,7 @@
 
         aside {
             width: 280px;
-            height: 100vh;
+            height: 100%;
             background: var(--dark-bg);
             color: white;
             display: flex;
@@ -106,7 +130,9 @@
             box-shadow: 4px 0 15px rgba(0,0,0,0.1);
             z-index: 10;
             transition: transform 0.3s ease, width 0.3s ease;
-            position: relative;
+            position: absolute;
+            top: 0;
+            right: 0;
         }
 
         aside.hidden {
@@ -116,7 +142,7 @@
         }
 
         .logo-area {
-            padding: 25px 20px;
+            padding: 20px 15px;
             text-align: center;
             background: rgba(255,255,255,0.05);
             white-space: nowrap;
@@ -124,28 +150,28 @@
         }
 
         .logo-area h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
             color: #ff9f43;
         }
 
         .logo-area p {
-            font-size: 12px;
+            font-size: 11px;
             color: #a4b0be;
             margin-top: 5px;
         }
 
         .nav-links {
             list-style: none;
-            padding: 15px 0;
+            padding: 10px 0;
             flex-grow: 1;
             overflow-y: auto;
-            max-height: calc(100vh - 160px);
+            max-height: calc(100% - 150px);
             overscroll-behavior: contain;
         }
 
         .nav-links li {
-            padding: 14px 25px;
+            padding: 12px 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -154,6 +180,7 @@
             font-weight: 600;
             color: #dcdde1;
             white-space: nowrap;
+            font-size: 14px;
         }
 
         .nav-links li:hover, .nav-links li.active {
@@ -163,36 +190,35 @@
         }
 
         .nav-links li i {
-            font-size: 18px;
+            font-size: 16px;
             width: 20px;
             text-align: center;
         }
 
         main {
             flex-grow: 1;
-            padding: 20px 25px 50px 25px; /* تم زيادة الـ padding السفلي لعمل نهاية منظمة للصفحة */
-            overflow-y: auto;
+            padding: 15px 15px 40px 15px;
             position: relative;
             display: flex;
             flex-direction: column;
             width: 100%;
+            overflow: visible !important;
         }
 
         .header-container {
-            /* تم تعديل الـ position لتتحرك الترويسة مع السحب ولا تظل ثابتة */
             position: relative;
             background: var(--light-bg);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .main-header-banner {
             background: linear-gradient(135deg, #1e272e, #2f3640);
             color: white;
-            padding: 15px 25px;
+            padding: 12px 15px;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -201,17 +227,18 @@
         }
 
         .main-header-banner h2 {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 900;
             color: #ff9f43;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .main-header-banner p {
-            font-size: 12px;
+            font-size: 11px;
             color: #dcdde1;
+            margin-top: 2px;
         }
 
         .top-bar {
@@ -219,7 +246,7 @@
             align-items: center;
             justify-content: space-between;
             background: white;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
@@ -228,11 +255,11 @@
             background: var(--dark-bg);
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -260,12 +287,12 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
         .stat-card {
-            padding: 15px;
+            padding: 14px;
             border-radius: 12px;
             color: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
@@ -278,37 +305,37 @@
         .stat-card.c2 { background: var(--secondary-gradient); }
         .stat-card.c3 { background: var(--info-gradient); }
         .stat-card.c4 { background: var(--warning-gradient); }
-        .stat-card.c5 { background: linear-gradient(135deg, #a55eea, #8854d0); }
+        .stat-card.c5 { background: linear-gradient(135deg, #a55eea, #8854d0); grid-column: span 2; }
 
-        .stat-info h3 { font-size: 11px; font-weight: 600; opacity: 0.9; }
-        .stat-info p { font-size: 18px; font-weight: 900; margin-top: 3px; }
-        .stat-card i { font-size: 28px; opacity: 0.4; }
+        .stat-info h3 { font-size: 12px; font-weight: 600; opacity: 0.9; }
+        .stat-info p { font-size: 18px; font-weight: 900; margin-top: 4px; }
+        .stat-card i { font-size: 26px; opacity: 0.4; }
 
         .alert-box {
             background: #fff3cd;
             border: 1px solid #ffeeba;
             color: #856404;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 13px;
+            margin-bottom: 15px;
+            font-size: 12px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .card-box {
             background: var(--card-bg);
             border-radius: 14px;
-            padding: 20px;
+            padding: 18px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .card-box h3 {
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 14px;
+            font-size: 15px;
             font-weight: 700;
             color: #2f3640;
             border-bottom: 2px solid #f1f2f6;
@@ -320,9 +347,9 @@
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .form-group label {
@@ -335,7 +362,7 @@
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 9px 12px;
+            padding: 10px 12px;
             border: 2px solid #dcdde1;
             border-radius: 8px;
             font-size: 13px;
@@ -362,7 +389,7 @@
             box-shadow: 0 0 5px rgba(255, 159, 67, 0.3);
         }
         .country-code {
-            padding: 9px 12px;
+            padding: 10px 12px;
             background: #f1f2f6;
             color: #2f3640;
             font-weight: bold;
@@ -372,7 +399,7 @@
         }
         .phone-input {
             width: 100%;
-            padding: 9px 12px;
+            padding: 10px 12px;
             background: transparent !important;
             border: none !important;
             color: #2f3640;
@@ -387,12 +414,14 @@
             background: var(--primary-gradient);
             color: white;
             border: none;
-            padding: 10px 22px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            text-align: center;
         }
 
         .btn:hover {
@@ -414,13 +443,13 @@
         }
 
         table th, table td {
-            padding: 14px 12px;
+            padding: 12px 10px;
             border-bottom: 1px solid #f1f2f6;
             vertical-align: middle;
         }
 
-        table th { background-color: #f8f9fa; color: #2f3640; font-size: 13px; font-weight: 700; }
-        table td { font-size: 13px; color: #57606f; }
+        table th { background-color: #f8f9fa; color: #2f3640; font-size: 12px; font-weight: 700; }
+        table td { font-size: 12px; color: #57606f; }
 
         .badge {
             padding: 4px 10px;
@@ -439,37 +468,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .calendar-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 8px;
             text-align: center;
             font-weight: 900;
-            font-size: 13px;
+            font-size: 12px;
             color: #2f3640;
             background: #f1f2f6;
             padding: 8px;
-            border-radius: 8px;
+            border-radius: 6px;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
 
         .cal-day {
             background: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px;
-            min-height: 95px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 6px;
+            min-height: 80px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -479,7 +508,7 @@
 
         .cal-day:hover {
             border-color: #ff9f43;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         .cal-day.status-qismain { background-color: #ff4757 !important; border-color: #e84118 !important; color: white !important; }
@@ -490,26 +519,26 @@
         }
 
         .cal-day .date-num { font-weight: 900; font-size: 12px; color: #2f3640; }
-        .cal-day .booking-info-tags { font-size: 10px; font-weight: 700; margin-top: 2px; }
+        .cal-day .booking-info-tags { font-size: 10px; font-weight: 700; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; }
 
         .legend-box {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             font-size: 12px;
             font-weight: 700;
             flex-wrap: wrap;
         }
         .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-color { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.1); }
 
         .calendar-details-card {
             background: #f8f9fa;
             border: 2px dashed #cbd5e1;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
             display: none;
         }
 
@@ -522,14 +551,16 @@
             align-items: center;
             z-index: 9999;
             overflow-y: auto;
-            padding: 20px;
+            padding: 10px;
         }
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 700px;
-            max-width: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 95vh;
+            overflow-y: auto;
             text-align: right;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative;
@@ -551,10 +582,10 @@
         }
 
         .invoice-header h2 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 900;
             color: #ff9f43;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .invoice-header p {
@@ -568,7 +599,7 @@
             justify-content: space-between;
             font-size: 11px;
             background: #f8f9fa;
-            padding: 6px 10px;
+            padding: 8px 10px;
             border-radius: 6px;
             margin-bottom: 10px;
             font-weight: 700;
@@ -588,7 +619,7 @@
             color: #1e272e;
             margin-bottom: 4px;
             border-bottom: 1px solid #eee;
-            padding-bottom: 2px;
+            padding-bottom: 3px;
         }
 
         .invoice-table {
@@ -599,7 +630,7 @@
 
         .invoice-table th, .invoice-table td {
             border: 1px solid #cbd5e1;
-            padding: 6px 8px;
+            padding: 6px;
             font-size: 11px;
             text-align: center;
         }
@@ -614,11 +645,11 @@
             background: #e8f4fd;
             border: 1px solid #bbeeff;
             color: #0c5460;
-            padding: 6px 10px;
+            padding: 8px 10px;
             border-radius: 6px;
             font-size: 10px;
             margin-bottom: 10px;
-            line-height: 1.3;
+            line-height: 1.4;
         }
 
         @media print {
@@ -662,9 +693,6 @@
             .no-print {
                 display: none !important;
             }
-            div[style*="display: flex"][style*="gap: 16px"] {
-                display: none !important;
-            }
         }
     </style>
 </head>
@@ -674,437 +702,428 @@
         <div class="splash-logo">
             <i class="fa-solid fa-house-chimney-window"></i> شاليه كروز
         </div>
-        <div class="splash-sub">جاري تحميل نظام الحجوزات والماليات الذكي...</div>
+        <div class="splash-sub">جاري تحميل نظام الحجوزات والماليات الذكي بملء الشاشة...</div>
         <div class="loader-ring"></div>
     </div>
 
-    <aside id="sidebar">
-        <div>
-            <div class="logo-area">
-                <h1>شاليه كروز</h1>
-                <p>إدارة الحجوزات والماليات 2026</p>
+    <!-- حاوية عرض بملء الشاشة بالكامل -->
+    <div class="mobile-viewport-wrapper">
+        <aside id="sidebar" class="hidden">
+            <div>
+                <div class="logo-area">
+                    <h1>شاليه كروز</h1>
+                    <p>إدارة الحجوزات والماليات 2026</p>
+                </div>
+                <ul class="nav-links">
+                    <li class="active" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> لوحة المؤشرات</li>
+                    <li onclick="switchTab('new-booking', this)"><i class="fa-solid fa-plus-circle"></i> تسجيل حجز جديد</li>
+                    <li onclick="switchTab('calendar', this)"><i class="fa-solid fa-calendar-days"></i> تقويم الحجوزات الذكي</li>
+                    <li onclick="switchTab('reservations', this)"><i class="fa-solid fa-file-lines"></i> سجل الحجوزات</li>
+                    <li onclick="switchTab('expenses', this)"><i class="fa-solid fa-coins"></i> المصروفات والصيانة</li>
+                    <li onclick="switchTab('reports', this)"><i class="fa-solid fa-file-invoice-dollar"></i> التقرير المالي</li>
+                    <li onclick="switchTab('backup', this)"><i class="fa-solid fa-database"></i> النسخ الاحتياطي</li>
+                </ul>
             </div>
-            <ul class="nav-links">
-                <li class="active" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> لوحة المؤشرات</li>
-                <li onclick="switchTab('new-booking', this)"><i class="fa-solid fa-plus-circle"></i> تسجيل حجز جديد</li>
-                <li onclick="switchTab('calendar', this)"><i class="fa-solid fa-calendar-days"></i> تقويم الحجوزات الذكي</li>
-                <li onclick="switchTab('reservations', this)"><i class="fa-solid fa-file-lines"></i> سجل الحجوزات</li>
-                <li onclick="switchTab('expenses', this)"><i class="fa-solid fa-coins"></i> المصروفات والصيانة</li>
-                <li onclick="switchTab('reports', this)"><i class="fa-solid fa-file-invoice-dollar"></i> التقرير المالي</li>
-                <li onclick="switchTab('backup', this)"><i class="fa-solid fa-database"></i> النسخ الاحتياطي</li>
-            </ul>
-        </div>
-        <div style="padding: 15px; text-align: center; color: #a4b0be; font-size: 11px; flex-shrink: 0;">
-            نسخة إدارية مطورة | تطوير FAHAD ALMUKLFI 
-            <p style="margin-top: 4px; font-size: 10px; color: #57606f;">جميع الحقوق محفوظة 2026</p>
-        </div>
-    </aside>
-
-    <main>
-        <div class="header-container">
-            <div class="main-header-banner">
-                <div>
-                    <h2><i class="fa-solid fa-house-chimney-window"></i> شاليه كروز - نظام إدارة الحجوزات والماليات</h2>
-                    <p>إدارة متكاملة للحجوزات، المداخيل، المصروفات، والتقارير المالية بكل احترافية</p>
-                </div>
+            <div style="padding: 12px; text-align: center; color: #a4b0be; font-size: 10px; flex-shrink: 0;">
+                إدارة مطورة | تطوير FAHAD ALMUKLFI 
+                <p style="margin-top: 2px; font-size: 9px; color: #57606f;">جميع الحقوق محفوظة 2026</p>
             </div>
+        </aside>
 
-            <div class="top-bar">
-                <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleSidebar(event)" title="إخفاء/إظهار القائمة">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="period-selector" onchange="updateDashboard()" style="padding: 6px 12px; border-radius: 8px; border: 2px solid #dcdde1; font-weight: 700; font-size: 13px;">
-                        <option value="month">الشهر الحالي</option>
-                        <option value="year">إجمالي سنة 2026</option>
-                    </select>
-                    <span id="current-date-badge" class="badge success" style="font-size: 13px; padding: 6px 12px;"></span>
+        <main>
+            <div class="header-container">
+                <div class="main-header-banner">
+                    <div>
+                        <h2><i class="fa-solid fa-house-chimney-window"></i> شاليه كروز</h2>
+                        <p>نظام إدارة الحجوزات والماليات الشامل</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <div id="dashboard" class="tab-content active">
-            <div id="today-alert-container"></div>
 
-            <div class="stats-grid">
-                <div class="stat-card c1">
-                    <div class="stat-info">
-                        <h3>المتوقعة</h3>
-                        <p id="stat-expected">0 ر.س</p>
+                <div class="top-bar">
+                    <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleSidebar(event)" title="إخفاء/إظهار القائمة">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <select id="period-selector" onchange="updateDashboard()" style="padding: 6px 10px; border-radius: 6px; border: 2px solid #dcdde1; font-weight: 700; font-size: 12px;">
+                            <option value="month">الشهر الحالي</option>
+                            <option value="year">إجمالي سنة 2026</option>
+                        </select>
                     </div>
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                </div>
-                <div class="stat-card c2">
-                    <div class="stat-info">
-                        <h3>المحصل</h3>
-                        <p id="stat-collected">0 ر.س</p>
-                    </div>
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
-                </div>
-                <div class="stat-card c3">
-                    <div class="stat-info">
-                        <h3>المتبقي</h3>
-                        <p id="stat-remaining">0 ر.س</p>
-                    </div>
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <div class="stat-card c4">
-                    <div class="stat-info">
-                        <h3>المصروفات</h3>
-                        <p id="stat-expenses">0 ر.س</p>
-                    </div>
-                    <i class="fa-solid fa-coins"></i>
-                </div>
-                <div class="stat-card c5">
-                    <div class="stat-info">
-                        <h3>الصفاء النهائي</h3>
-                        <p id="stat-net">0 ر.س</p>
-                    </div>
-                    <i class="fa-solid fa-vault"></i>
                 </div>
             </div>
+            
+            <div id="dashboard" class="tab-content active">
+                <div id="today-alert-container"></div>
 
-            <div class="card-box">
-                <h3>نظرة سريعة على آخر الحجوزات</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>المستأجر</th>
-                                <th>التاريخ (ميلادي / هجري)</th>
-                                <th>القسم</th>
-                                <th>الإيجار</th>
-                                <th>المتبقي</th>
-                                <th>الحالة</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboard-recent-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="new-booking" class="tab-content">
-            <div class="card-box">
-                <h3 id="form-title-text"><i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> نموذج تسجيل حجز جديد للشاليه</h3>
-                <form id="quick-booking-form" onsubmit="saveBookingData(event)">
-                    <input type="hidden" id="b-edit-id" value="">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>اسم المستأجر</label>
-                            <input type="text" id="b-name" required placeholder="مثال: تميم البدحاني">
+                <div class="stats-grid">
+                    <div class="stat-card c1">
+                        <div class="stat-info">
+                            <h3>المتوقعة</h3>
+                            <p id="stat-expected">0 ر.س</p>
                         </div>
-                        <div class="form-group">
-                            <label>رقم الجوال</label>
-                            <div class="phone-wrapper">
-                                <span class="country-code">+966</span>
-                                <input type="tel" id="b-phone" class="phone-input" placeholder="5xxxxxxxx" maxlength="9" oninput="formatPhoneNumber(this)" required>
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="stat-card c2">
+                        <div class="stat-info">
+                            <h3>المحصل</h3>
+                            <p id="stat-collected">0 ر.س</p>
+                        </div>
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div class="stat-card c3">
+                        <div class="stat-info">
+                            <h3>المتبقي</h3>
+                            <p id="stat-remaining">0 ر.س</p>
+                        </div>
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="stat-card c4">
+                        <div class="stat-info">
+                            <h3>المصروفات</h3>
+                            <p id="stat-expenses">0 ر.س</p>
+                        </div>
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div class="stat-card c5">
+                        <div class="stat-info">
+                            <h3>الصفاء النهائي</h3>
+                            <p id="stat-net">0 ر.س</p>
+                        </div>
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <h3>آخر الحجوزات المضافة</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>المستأجر</th>
+                                    <th>التاريخ</th>
+                                    <th>القسم</th>
+                                    <th>الإيجار</th>
+                                    <th>المتبقي</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="new-booking" class="tab-content">
+                <div class="card-box">
+                    <h3 id="form-title-text"><i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> حجز جديد للشاليه</h3>
+                    <form id="quick-booking-form" onsubmit="saveBookingData(event)">
+                        <input type="hidden" id="b-edit-id" value="">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>اسم المستأجر</label>
+                                <input type="text" id="b-name" required placeholder="مثال: تميم البدحاني">
+                            </div>
+                            <div class="form-group">
+                                <label>رقم الجوال</label>
+                                <div class="phone-wrapper">
+                                    <span class="country-code">+966</span>
+                                    <input type="tel" id="b-phone" class="phone-input" placeholder="5xxxxxxxx" maxlength="9" oninput="formatPhoneNumber(this)" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>تاريخ الحجز</label>
+                                <input type="date" id="b-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>الفترة</label>
+                                <select id="b-period">
+                                    <option>مساء</option>
+                                    <option>صباح</option>
+                                    <option>يوم كامل</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>القسم</label>
+                                <select id="b-section">
+                                    <option value="نساء">نساء</option>
+                                    <option value="رجال">رجال</option>
+                                    <option value="قسمين">قسمين (كامل الشاليه)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>قيمة الإيجار الإجمالية</label>
+                                <input type="number" id="b-price" required placeholder="600" oninput="calcRemaining()">
+                            </div>
+                            <div class="form-group">
+                                <label>العربون / المدفوع</label>
+                                <input type="number" id="b-paid" required placeholder="100" oninput="calcRemaining()">
+                            </div>
+                            <div class="form-group">
+                                <label>المتبقي تلقائياً</label>
+                                <input type="text" id="b-rem" readonly style="background: #f1f2f6; font-weight: bold; color: #c62828;">
+                            </div>
+                            <div class="form-group">
+                                <label>طريقة الدفع</label>
+                                <select id="b-method">
+                                    <option>تحويل بنكي</option>
+                                    <option>كاش</option>
+                                    <option>شبكة</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>حالة الحجز</label>
+                                <select id="b-status">
+                                    <option value="مؤكد">مؤكد بالكامل</option>
+                                    <option value="عربون">مدفوع عربون</option>
+                                    <option value="غير مؤكد">غير مؤكد / معلق</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label>تاريخ الحجز</label>
-                            <input type="date" id="b-date" required>
-                        </div>
-                        <div class="form-group">
-                            <label>الفترة</label>
-                            <select id="b-period">
-                                <option>مساء</option>
-                                <option>صباح</option>
-                                <option>يوم كامل</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>القسم</label>
-                            <select id="b-section">
-                                <option value="نساء">نساء</option>
-                                <option value="رجال">رجال</option>
-                                <option value="قسمين">قسمين (كامل الشاليه)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>قيمة الإيجار الإجمالية</label>
-                            <input type="number" id="b-price" required placeholder="600" oninput="calcRemaining()">
-                        </div>
-                        <div class="form-group">
-                            <label>العربون / المدفوع</label>
-                            <input type="number" id="b-paid" required placeholder="100" oninput="calcRemaining()">
-                        </div>
-                        <div class="form-group">
-                            <label>المتبقي تلقائياً</label>
-                            <input type="text" id="b-rem" readonly style="background: #f1f2f6; font-weight: bold; color: #c62828;">
-                        </div>
-                        <div class="form-group">
-                            <label>طريقة الدفع</label>
-                            <select id="b-method">
-                                <option>تحويل بنكي</option>
-                                <option>كاش</option>
-                                <option>شبكة</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>حالة الحجز</label>
-                            <select id="b-status">
-                                <option value="مؤكد">مؤكد بالكامل</option>
-                                <option value="عربون">مدفوع عربون</option>
-                                <option value="غير مؤكد">غير مؤكد / معلق</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn" style="margin-top: 10px;"><i class="fa-solid fa-check"></i> حفظ الحجز مع التحقق الفوري</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="calendar" class="tab-content">
-            <div class="card-box">
-                <h3>تقويم الحجوزات الشامل</h3>
-                
-                <div class="legend-box">
-                    <div class="legend-item"><div class="legend-color" style="background: #ff4757;"></div> محجوز قسمين (كامل)</div>
-                    <div class="legend-item"><div class="legend-color" style="background: #ffa502;"></div> محجوز قسم جزئي</div>
-                    <div class="legend-item"><div class="legend-color" style="background: #ffffff; border: 1px solid #ccc;"></div> يوم متاح</div>
-                </div>
-
-                <div class="calendar-controls">
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <button onclick="changeMonth(-1)" class="btn" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-chevron-right"></i> السابق</button>
-                        <select id="cal-month-select" onchange="jumpToMonth()" style="padding: 6px 12px; border-radius: 8px; border: 2px solid #dcdde1; font-weight: 700; font-size: 13px;">
-                            <option value="0">يناير</option>
-                            <option value="1">فبراير</option>
-                            <option value="2">مارس</option>
-                            <option value="3">أبريل</option>
-                            <option value="4">مايو</option>
-                            <option value="5">يونيو</option>
-                            <option value="6">يوليو</option>
-                            <option value="7">أغسطس</option>
-                            <option value="8">سبتمبر</option>
-                            <option value="9">أكتوبر</option>
-                            <option value="10">نوفمبر</option>
-                            <option value="11">ديسمبر</option>
-                        </select>
-                        <button onclick="changeMonth(1)" class="btn" style="padding: 6px 12px; font-size: 12px;">التالي <i class="fa-solid fa-chevron-left"></i></button>
-                    </div>
-
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <input type="date" id="calendar-search-date" style="padding: 6px 10px; border-radius: 8px; border: 2px solid #dcdde1; font-size: 13px;">
-                        <button onclick="quickCheckDate()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-search"></i> فحص التاريخ</button>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-bottom: 12px;">
-                    <span id="cal-month-title" style="font-weight: 900; font-size: 16px; color: #1e272e;"></span>
-                </div>
-                
-                <div class="calendar-weekdays">
-                    <div>الأحد</div>
-                    <div>الاثنين</div>
-                    <div>الثلاثاء</div>
-                    <div>الأربعاء</div>
-                    <div>الخميس</div>
-                    <div>الجمعة</div>
-                    <div>السبت</div>
-                </div>
-
-                <div class="calendar-grid" id="calendar-container"></div>
-
-                <div id="calendar-details-box" class="calendar-details-card">
-                    <h4 style="margin-bottom: 10px; color: #2f3640; border-bottom: 1px solid #ddd; padding-bottom: 5px;"><i class="fa-solid fa-info-circle"></i> تفاصيل الحجوزات للتاريخ المحدد</h4>
-                    <div id="calendar-details-content" style="font-size: 13px; line-height: 1.8;"></div>
+                        <button type="submit" class="btn" style="margin-top: 10px;"><i class="fa-solid fa-check"></i> حفظ الحجز فوراً</button>
+                    </form>
                 </div>
             </div>
-        </div>
 
-        <div id="reservations" class="tab-content">
-            <div class="card-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                    <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 8px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 280px; font-size: 13px;">
+            <div id="calendar" class="tab-content">
+                <div class="card-box">
+                    <h3>تقويم الحجوزات الذكي</h3>
                     
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button onclick="exportToExcel()" class="btn btn-success"><i class="fa-solid fa-file-excel"></i> تصدير إلى Excel</button>
+                    <div class="legend-box">
+                        <div class="legend-item"><div class="legend-color" style="background: #ff4757;"></div> محجوز كامل</div>
+                        <div class="legend-item"><div class="legend-color" style="background: #ffa502;"></div> جزئي</div>
+                        <div class="legend-item"><div class="legend-color" style="background: #ffffff; border: 1px solid #ccc;"></div> متاح</div>
+                    </div>
+
+                    <div class="calendar-controls">
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <button onclick="changeMonth(-1)" class="btn" style="padding: 6px 12px; font-size: 11px; width: auto;"><i class="fa-solid fa-chevron-right"></i></button>
+                            <select id="cal-month-select" onchange="jumpToMonth()" style="padding: 6px 10px; border-radius: 6px; border: 2px solid #dcdde1; font-weight: 700; font-size: 12px;">
+                                <option value="0">يناير</option>
+                                <option value="1">فبراير</option>
+                                <option value="2">مارس</option>
+                                <option value="3">أبريل</option>
+                                <option value="4">مايو</option>
+                                <option value="5">يونيو</option>
+                                <option value="6">يوليو</option>
+                                <option value="7">أغسطس</option>
+                                <option value="8">سبتمبر</option>
+                                <option value="9">أكتوبر</option>
+                                <option value="10">نوفمبر</option>
+                                <option value="11">ديسمبر</option>
+                            </select>
+                            <button onclick="changeMonth(1)" class="btn" style="padding: 6px 12px; font-size: 11px; width: auto;"><i class="fa-solid fa-chevron-left"></i></button>
+                        </div>
+
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <input type="date" id="calendar-search-date" style="padding: 6px 10px; border-radius: 6px; border: 2px solid #dcdde1; font-size: 12px; width: 130px;">
+                            <button onclick="quickCheckDate()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 11px; width: auto;"><i class="fa-solid fa-search"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <span id="cal-month-title" style="font-weight: 900; font-size: 15px; color: #1e272e;"></span>
+                    </div>
+                    
+                    <div class="calendar-weekdays">
+                        <div>أحد</div>
+                        <div>إثنين</div>
+                        <div>ثلاثاء</div>
+                        <div>أربعاء</div>
+                        <div>خميس</div>
+                        <div>جمعة</div>
+                        <div>سبت</div>
+                    </div>
+
+                    <div class="calendar-grid" id="calendar-container"></div>
+
+                    <div id="calendar-details-box" class="calendar-details-card">
+                        <h4 style="margin-bottom: 8px; color: #2f3640; border-bottom: 1px solid #ddd; padding-bottom: 6px; font-size: 13px;"><i class="fa-solid fa-info-circle"></i> التفاصيل</h4>
+                        <div id="calendar-details-content" style="font-size: 12px; line-height: 1.6;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reservations" class="tab-content">
+                <div class="card-box">
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                        <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 10px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 100%; font-size: 12px;">
                         
-                        <label class="btn" style="background: #10ac84; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-file-excel"></i> استيراد ملف Excel
-                            <input type="file" id="import-excel-file" onchange="importFromExcel(event)" style="display: none;" accept=".xlsx, .xls, .csv">
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="exportToExcel()" class="btn btn-success" style="font-size: 11px; padding: 8px;"><i class="fa-solid fa-file-excel"></i> تصدير إكسل</button>
+                            <label class="btn" style="background: #10ac84; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; padding: 8px; width: 100%;">
+                                <i class="fa-solid fa-file-excel"></i> استيراد إكسل
+                                <input type="file" id="import-excel-file" onchange="importFromExcel(event)" style="display: none;" accept=".xlsx, .xls, .csv">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>المستأجر</th>
+                                    <th>الجوال</th>
+                                    <th>التاريخ</th>
+                                    <th>الفترة</th>
+                                    <th>القسم</th>
+                                    <th>الإيجار</th>
+                                    <th>الواصل</th>
+                                    <th>المتبقي</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookings-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="expenses" class="tab-content">
+                <div class="card-box">
+                    <h3>تسجيل مصروف أو صيانة</h3>
+                    <form onsubmit="addExpense(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>البند / الوصف</label>
+                                <input type="text" id="e-title" required placeholder="فواتير كهرباء / صيانة...">
+                            </div>
+                            <div class="form-group">
+                                <label>التصنيف</label>
+                                <select id="e-category">
+                                    <option>كهرباء وماء</option>
+                                    <option>نظافة وضيافة</option>
+                                    <option>صيانة وإصلاحات</option>
+                                    <option>رواتب وأجور</option>
+                                    <option>أخرى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>المبلغ (ر.س)</label>
+                                <input type="number" id="e-amount" required placeholder="250">
+                            </div>
+                            <div class="form-group">
+                                <label>التاريخ</label>
+                                <input type="date" id="e-date" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-secondary" style="font-size: 12px;"><i class="fa-solid fa-plus"></i> تسجيل المصروف</button>
+                    </form>
+                </div>
+
+                <div class="card-box">
+                    <h3>سجل المصروفات</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>البند</th>
+                                    <th>التصنيف</th>
+                                    <th>المبلغ</th>
+                                    <th>التاريخ</th>
+                                    <th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenses-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reports" class="tab-content">
+                <div class="card-box">
+                    <h3>التقرير المالي التفصيلي</h3>
+                    <div id="financial-report-content" style="line-height: 1.8; font-size: 13px; color: #2f3640;"></div>
+                    <button onclick="window.print()" class="btn" style="margin-top: 15px; font-size: 12px;"><i class="fa-solid fa-print"></i> طباعة التقرير</button>
+                </div>
+            </div>
+
+            <div id="backup" class="tab-content">
+                <div class="card-box">
+                    <h3>النسخ الاحتياطي والأمان</h3>
+                    <p style="font-size: 12px; color: #718093; margin-bottom: 14px;">حفظ نسخة احتياطية من الحسابات كملف JSON واسترجاعها بأي وقت.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button onclick="exportDataJSON()" class="btn btn-success" style="font-size: 12px;"><i class="fa-solid fa-download"></i> تصدير نسخة JSON</button>
+                        
+                        <label class="btn btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px;">
+                            <i class="fa-solid fa-upload"></i> استعادة نسخة JSON
+                            <input type="file" id="import-file" onchange="importDataJSON(event)" style="display: none;" accept=".json">
                         </label>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table>
+            </div>
+        </main>
+
+        <!-- Modal السند المالي -->
+        <div id="receipt-modal" class="modal" onclick="if(event.target === this) closeReceiptModal();">
+            <div class="modal-content">
+                <div id="invoice-printable-area" class="invoice-print-container">
+                    <div class="invoice-header">
+                        <h2>شاليه كروز</h2>
+                        <p>سند تأكيد حجز رسمي وفاتورة تفصيلية</p>
+                        <p style="margin-top: 2px; font-size: 10px; color: #57606f;"> شارع الإمام مسلم | الجوال: 0555686540 </p>
+                    </div>
+
+                    <div class="invoice-meta">
+                        <div>رقم السند: <span id="inv-id">#--</span></div>
+                        <div>تاريخ الإصدار: <span id="inv-print-date">--</span></div>
+                    </div>
+
+                    <div class="client-info-box">
+                        <h4>بيانات العميل</h4>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 4px;">
+                            <div>اسم المستأجر: <b id="inv-client-name">--</b></div>
+                            <div>رقم الجوال: <b id="inv-client-phone">--</b></div>
+                            <div>تاريخ الحجز: <b id="inv-booking-date">--</b></div>
+                            <div>الفترة: <b id="inv-booking-period">--</b></div>
+                        </div>
+                    </div>
+
+                    <table class="invoice-table">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>المستأجر</th>
-                                <th>الجوال</th>
-                                <th>تاريخ الحجز</th>
-                                <th>الفترة</th>
                                 <th>القسم</th>
-                                <th>الإيجار</th>
+                                <th>المبلغ</th>
                                 <th>الواصل</th>
                                 <th>المتبقي</th>
                                 <th>الحالة</th>
-                                <th>إجراءات</th>
                             </tr>
                         </thead>
-                        <tbody id="bookings-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="expenses" class="tab-content">
-            <div class="card-box">
-                <h3>تسجيل مصروف أو صيانة جديدة</h3>
-                <form onsubmit="addExpense(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>البند / الوصف</label>
-                            <input type="text" id="e-title" required placeholder="فواتير كهرباء / صيانة...">
-                        </div>
-                        <div class="form-group">
-                            <label>التصنيف</label>
-                            <select id="e-category">
-                                <option>كهرباء وماء</option>
-                                <option>نظافة وضيافة</option>
-                                <option>صيانة وإصلاحات</option>
-                                <option>رواتب وأجور</option>
-                                <option>أخرى</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>المبلغ (ر.س)</label>
-                            <input type="number" id="e-amount" required placeholder="250">
-                        </div>
-                        <div class="form-group">
-                            <label>التاريخ</label>
-                            <input type="date" id="e-date" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> تسجيل المصروف</button>
-                </form>
-            </div>
-
-            <div class="card-box">
-                <h3>سجل المصروفات</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
+                        <tbody>
                             <tr>
-                                <th>البند</th>
-                                <th>التصنيف</th>
-                                <th>المبلغ</th>
-                                <th>التاريخ</th>
-                                <th>إجراء</th>
+                                <td id="inv-section">--</td>
+                                <td id="inv-price">-- ر.س</td>
+                                <td id="inv-paid" style="color: #10ac84; font-weight: bold;">-- ر.س</td>
+                                <td id="inv-rem" style="color: #c62828; font-weight: bold;">-- ر.س</td>
+                                <td><span id="inv-status-badge" class="badge success">--</span></td>
                             </tr>
-                        </thead>
-                        <tbody id="expenses-table-body"></tbody>
+                        </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
 
-        <div id="reports" class="tab-content">
-            <div class="card-box">
-                <h3>التقرير المالي التفصيلي</h3>
-                <div id="financial-report-content" style="line-height: 2; font-size: 14px; color: #2f3640;"></div>
-                <button onclick="window.print()" class="btn" style="margin-top: 20px;"><i class="fa-solid fa-print"></i> طباعة التقرير</button>
-            </div>
-        </div>
+                    <div class="deposit-policy-box">
+                        <h5><i class="fa-solid fa-circle-info"></i> سياسة العربون والتأمين والشروط:</h5>
+                        • العربون المدفوع يُعد تأكيداً رسمياً للحجز ويتم خصمه من إجمالي الإيجار.<br>     
+                        • <b>بند التأمين:</b> يُؤخذ مبلغ التأمين قبل الدخول ويُسترد بالكامل عند سلامة المكان.<br>
+                        • في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر يسترجع العربون كاملاً.
+                    </div>
 
-        <div id="backup" class="tab-content">
-            <div class="card-box">
-                <h3>النسخ الاحتياطي والأمان</h3>
-                <p style="font-size: 13px; color: #718093; margin-bottom: 20px;">يمكنك حفظ نسخة احتياطية من الحسابات كملف JSON واسترجاعها بأي وقت.</p>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button onclick="exportDataJSON()" class="btn btn-success"><i class="fa-solid fa-download"></i> تصدير نسخة JSON</button>
-                    
-                    <label class="btn btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-upload"></i> استعادة نسخة JSON
-                        <input type="file" id="import-file" onchange="importDataJSON(event)" style="display: none;" accept=".json">
-                    </label>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal السند المالي -->
-    <div id="receipt-modal" class="modal" onclick="if(event.target === this) closeReceiptModal();">
-        <div class="modal-content">
-            <div id="invoice-printable-area" class="invoice-print-container">
-                <div class="invoice-header">
-                    <h2>شاليه كروز</h2>
-                    <p>سند تأكيد حجز رسمي وفاتورة تفصيلية</p>
-                    <p style="margin-top: 4px; font-size: 10px; color: #57606f;"> شارع الإمام مسلم | الجوال: 0555686540 </p>
-                </div>
-
-                <div class="invoice-meta">
-                    <div>رقم السند: <span id="inv-id">#--</span></div>
-                    <div>تاريخ الإصدار: <span id="inv-print-date">--</span></div>
-                </div>
-
-                <div class="client-info-box">
-                    <h4>بيانات العميل</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px;">
-                        <div>اسم المستأجر: <b id="inv-client-name">--</b></div>
-                        <div>رقم الجوال: <b id="inv-client-phone">--</b></div>
-                        <div>تاريخ الحجز: <b id="inv-booking-date">--</b></div>
-                        <div>الفترة: <b id="inv-booking-period">--</b></div>
+                    <div class="signature-section" style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px;">
+                        <div style="text-align: center; width: 45%;">
+                            <p style="margin-bottom: 20px; font-weight: bold; color: #1e272e;">توقيع المستأجر</p>
+                            <p style="border-bottom: 1px solid #718093; width: 120px; margin: 0 auto;"></p>
+                        </div>
+                        <div style="text-align: center; width: 45%;">
+                            <p style="margin-bottom: 4px; font-weight: bold; color: #1e272e;">ختم الإدارة</p>
+                            <div style="width: 80px; height: 40px; border: 1px dashed #a4b0be; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #a4b0be; border-radius: 4px;">الختم</div>
+                        </div>
                     </div>
                 </div>
 
-                <table class="invoice-table">
-                    <thead>
-                        <tr>
-                            <th>القسم</th>
-                            <th>المبلغ كامل</th>
-                            <th>الواصل</th>
-                            <th>طريقة الدفع</th>
-                            <th>المتبقي</th>
-                            <th>الحالة</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="inv-section">--</td>
-                            <td id="inv-price">-- ر.س</td>
-                            <td id="inv-paid" style="color: #10ac84; font-weight: bold;">-- ر.س</td>
-                            <td id="inv-method">--</td>
-                            <td id="inv-rem" style="color: #c62828; font-weight: bold;">-- ر.س</td>
-                            <td><span id="inv-status-badge" class="badge success">--</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="deposit-policy-box">
-                    <h5><i class="fa-solid fa-circle-info"></i> سياسة العربون والتأمين والشروط:</h5>
-                    • العربون المدفوع يُعد تأكيداً رسمياً للحجز ويتم خصمه من إجمالي قيمة الإيجار.<br>     
-                    • <b>بند التأمين:</b> يُؤخذ مبلغ التأمين قبل الدخول، ويُسترد بالكامل في حال عدم وجود أي تلفيات أو حوادث في المرافق.<br>
-                    • في حال إلغاء الحجز من قبل العميل قبل موعد الاستحقاق بـ 48 ساعة أو أكثر، يتم استرجاع العربون كاملاً. أما في حال الإلغاء بأقل من 48 ساعة، يعتبر العربون غير مسترد لضمان حقوق الشاليه.   
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                    <button onclick="downloadReceiptPDFDirect()" class="btn" style="background: #eb4d4b; font-size: 12px;"><i class="fa-solid fa-file-pdf"></i> تحميل PDF</button>
+                    <button onclick="sendWhatsApp()" class="btn btn-success" style="font-size: 12px;"><i class="fa-brands fa-whatsapp"></i> إرسال واتساب</button>
+                    <button onclick="closeReceiptModal()" class="btn" style="background: #a4b0be; font-size: 12px;">إغلاق</button>
                 </div>
-
-                <div class="invoice-notes" style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 6px 10px; border-radius: 6px; font-size: 10px; margin-top: 8px; line-height: 1.3;">
-                    <h5><i class="fa-solid fa-triangle-exclamation"></i> تنبيهات والشروط العامة لاستخدام الشاليه:</h5>
-                    1. الحفاظ التام على نظافة المكان والمرافق العامة وإعادتها كما كانت عند التسليم.<br>
-                    2. الالتزام بموعد الدخول والخروج المحدد بدقة لضمان راحة وخدمة جميع الضيوف.<br>
-                    3. منع استخدام الألعاب النارية أو إحداث أي إزعاج بيئي داخل النطاق السكني.<br>
-                    4. إدارة الشاليه غير مسئولة نهائياً عن فقدان الأغراض الشخصية الثمينة غير المسلمة لإدارة الاستقبال.
-                </div>
-
-                <div class="signature-section" style="display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px dashed #cbd5e1; font-size: 11px;">
-                    <div style="text-align: center; width: 45%;">
-                        <p style="margin-bottom: 25px; font-weight: bold; color: #1e272e;">توقيع العميل (المستأجر)</p>
-                        <p style="border-bottom: 1px solid #718093; width: 150px; margin: 0 auto;"></p>
-                    </div>
-                    <div style="text-align: center; width: 45%;">
-                        <p style="margin-bottom: 5px; font-weight: bold; color: #1e272e;">ختم الإدارة / الاعتماد</p>
-                        <div style="width: 100px; height: 50px; border: 1px dashed #a4b0be; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #a4b0be; border-radius: 6px;">مكان الختم</div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-                <button onclick="downloadReceiptPDFDirect()" class="btn" style="background: #eb4d4b;"><i class="fa-solid fa-file-pdf"></i> تحميل PDF</button>
-                <button onclick="sendWhatsApp()" class="btn btn-success"><i class="fa-brands fa-whatsapp"></i> إرسال واتساب</button>
-                <button onclick="closeReceiptModal()" class="btn" style="background: #a4b0be;">إغلاق</button>
             </div>
         </div>
     </div>
@@ -1166,7 +1185,7 @@
                 if (isNaN(d.getTime())) return dateStr;
                 let hijriFormatted = d.toLocaleDateString('ar-SA-u-ca-islamic-umalqura', {
                     day: 'numeric',
-                    month: 'long',
+                    month: 'short',
                     year: 'numeric'
                 });
                 return `${dateStr} (${hijriFormatted})`;
@@ -1182,6 +1201,8 @@
             if(element) element.classList.add('active');
             if(tabId === 'calendar') renderCalendar();
             if(tabId === 'reports') generateReport();
+            
+            document.getElementById('sidebar').classList.add('hidden');
         }
 
         function toggleSidebar(e) {
@@ -1271,7 +1292,7 @@
             document.getElementById('quick-booking-form').reset();
             let today = new Date().toISOString().split('T')[0];
             document.getElementById('b-date').value = today;
-            document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> نموذج تسجيل حجز جديد للشاليه`;
+            document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> حجز جديد للشاليه`;
             saveAndRefresh();
             switchTab('dashboard', document.querySelectorAll('.nav-links li')[0]);
         }
@@ -1296,7 +1317,7 @@
             document.getElementById('b-status').value = b.status;
             calcRemaining();
 
-            document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #ff9f43;"></i> تعديل بيانات الحجز: ${b.name}`;
+            document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #ff9f43;"></i> تعديل: ${b.name}`;
             switchTab('new-booking', document.querySelectorAll('.nav-links li')[1]);
         }
 
@@ -1377,7 +1398,7 @@
             let todayBookings = bookings.filter(b => b.date === todayStr);
             let alertBox = document.getElementById('today-alert-container');
             if(todayBookings.length > 0) {
-                alertBox.innerHTML = `<div class="alert-box"><i class="fa-solid fa-bell"></i> تنبيه: يوجد ${todayBookings.length} حجز مسجل اليوم باسم (${todayBookings.map(b => b.name).join(', ')})!</div>`;
+                alertBox.innerHTML = `<div class="alert-box"><i class="fa-solid fa-bell"></i> يوجد ${todayBookings.length} حجز اليوم باسم (${todayBookings.map(b => b.name).join(', ')})!</div>`;
             } else {
                 alertBox.innerHTML = '';
             }
@@ -1389,7 +1410,7 @@
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><b>${b.name}</b></td>
-                    <td>${formatDualDate(b.date)}</td>
+                    <td>${b.date}</td>
                     <td><span class="badge nisah">${b.section}</span></td>
                     <td>${b.price} ر.س</td>
                     <td style="color: #c62828; font-weight: bold;">${rem} ر.س</td>
@@ -1409,7 +1430,7 @@
                 
                 let receiptBtn = document.createElement('button');
                 receiptBtn.className = 'btn';
-                receiptBtn.style.cssText = 'padding: 5px 8px; font-size: 11px; margin-left: 3px;';
+                receiptBtn.style.cssText = 'padding: 6px 10px; font-size: 11px; margin-left: 4px; width:auto;';
                 receiptBtn.title = 'عرض السند';
                 receiptBtn.innerHTML = '<i class="fa-solid fa-receipt"></i>';
                 receiptBtn.onclick = function() { openReceipt(b); };
@@ -1418,15 +1439,15 @@
                 
                 let btnPay = document.createElement('button');
                 btnPay.className = 'btn btn-success';
-                btnPay.style.cssText = 'padding: 5px 10px; font-size: 11px; margin-left: 3px;';
-                btnPay.title = 'تأكيد سداد المبلغ كامل';
-                btnPay.innerHTML = '<i class="fa-solid fa-check-double"></i> دفع كامل';
+                btnPay.style.cssText = 'padding: 6px 10px; font-size: 11px; margin-left: 4px; width:auto;';
+                btnPay.title = 'دفع كامل';
+                btnPay.innerHTML = '<i class="fa-solid fa-check"></i>';
                 btnPay.onclick = function() { quickMarkAsPaid(b.id); };
                 tdActions.appendChild(btnPay);
 
                 let btnEdit = document.createElement('button');
                 btnEdit.className = 'btn';
-                btnEdit.style.cssText = 'padding: 5px 8px; font-size: 11px; background: #54a0ff; margin-left: 3px;';
+                btnEdit.style.cssText = 'padding: 6px 10px; font-size: 11px; background: #54a0ff; margin-left: 4px; width:auto;';
                 btnEdit.title = 'تعديل';
                 btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i>';
                 btnEdit.onclick = function() { editBooking(b.id); };
@@ -1436,15 +1457,15 @@
 
                 let btnPdf = document.createElement('button');
                 btnPdf.className = 'btn';
-                btnPdf.style.cssText = 'padding: 5px 8px; font-size: 11px; background: #eb4d4b; margin-left: 3px;';
-                btnPdf.title = 'تحميل PDF';
+                btnPdf.style.cssText = 'padding: 6px 10px; font-size: 11px; background: #eb4d4b; margin-left: 4px; width:auto;';
+                btnPdf.title = 'PDF';
                 btnPdf.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
                 btnPdf.onclick = function() { downloadReceiptPDF(b.id); };
                 tdActions.appendChild(btnPdf);
 
                 let btnDel = document.createElement('button');
                 btnDel.className = 'btn badge danger';
-                btnDel.style.cssText = 'padding: 6px 8px; border:none; cursor:pointer;';
+                btnDel.style.cssText = 'padding: 6px 10px; border:none; cursor:pointer; width:auto;';
                 btnDel.title = 'حذف';
                 btnDel.innerHTML = '<i class="fa-solid fa-trash"></i>';
                 btnDel.onclick = function() { deleteBooking(b.id); };
@@ -1455,7 +1476,7 @@
                     <td>${index + 1}</td>
                     <td><b>${b.name}</b></td>
                     <td style="direction: ltr; text-align: right;">${displayPhone}</td>
-                    <td>${formatDualDate(b.date)}</td>
+                    <td>${b.date}</td>
                     <td>${b.period}</td>
                     <td><span class="badge ${badgeClass}">${b.section}</span></td>
                     <td>${b.price} ر.س</td>
@@ -1477,8 +1498,8 @@
                     <td><b>${e.title}</b></td>
                     <td>${e.category}</td>
                     <td style="color: #c62828; font-weight: bold;">${e.amount} ر.س</td>
-                    <td>${formatDualDate(e.date)}</td>
-                    <td><button onclick='deleteExpense("${e.id}")' class="btn badge danger" style="padding: 5px 8px; border:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
+                    <td>${e.date}</td>
+                    <td><button onclick='deleteExpense("${e.id}")' class="btn badge danger" style="padding: 6px 10px; border:none; cursor:pointer; width:auto;"><i class="fa-solid fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1516,7 +1537,7 @@
             let container = document.getElementById('calendar-container');
             container.innerHTML = '';
             let monthName = monthNames[currentCalendarMonth];
-            document.getElementById('cal-month-title').innerText = `حجوزات شهر ${monthName} ${currentCalendarYear}`;
+            document.getElementById('cal-month-title').innerText = `${monthName} ${currentCalendarYear}`;
             document.getElementById('calendar-details-box').style.display = 'none';
             
             let daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
@@ -1571,15 +1592,15 @@
 
             let dualDateStr = formatDualDate(checkDate);
             if(matchedBookings.length === 0) {
-                content.innerHTML = `<b style="color: #2ed573;"><i class="fa-solid fa-circle-check"></i> التاريخ (${dualDateStr}) متاح تماماً للحجز.</b>`;
+                content.innerHTML = `<b style="color: #2ed573;"><i class="fa-solid fa-circle-check"></i> التاريخ (${dualDateStr}) متاح تماماً.</b>`;
             } else {
                 let hasFull = matchedBookings.some(b => b.section === 'قسمين');
-                let html = `<b style="color: #c62828;"><i class="fa-solid fa-triangle-exclamation"></i> التاريخ (${dualDateStr}) محجوز كالتالي:</b><br><br>`;
+                let html = `<b style="color: #c62828;"><i class="fa-solid fa-triangle-exclamation"></i> محجوز في (${dualDateStr}):</b><br>`;
                 matchedBookings.forEach(b => {
-                    html += `• المستأجر: <b>${b.name}</b> | القسم: <span class="badge nisah">${b.section}</span> | الفترة: ${b.period} | الحالة: ${b.status}<br>`;
+                    html += `• ${b.name} (${b.section}) - ${b.status}<br>`;
                 });
                 if(!hasFull) {
-                    html += `<br><b style="color: #10ac84;"><i class="fa-solid fa-circle-info"></i> يمكنك حجز القسم الآخر لعدم التعارض.</b>`;
+                    html += `<br><b style="color: #10ac84;">متاح حجز القسم الآخر.</b>`;
                 }
                 content.innerHTML = html;
             }
@@ -1591,16 +1612,15 @@
             box.style.display = 'block';
             
             let dualDateStr = formatDualDate(dateStr);
-            let html = `<b>تفاصيل التاريخ: ${dualDateStr}</b><br><hr style="margin: 5px 0;">`;
+            let html = `<b>التاريخ: ${dualDateStr}</b><br><hr style="margin: 6px 0;">`;
             dayBookings.forEach(b => {
                 let rem = Math.max(0, (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0));
                 let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 html += `
                     • المستأجر: <b>${b.name}</b> (${displayPhone})<br>
-                    • القسم المحجوز: <span class="badge nisah">${b.section}</span> | الفترة: ${b.period}<br>
-                    • الإيجار: ${b.price} ر.س | الواصل: ${b.paid} ر.س | المتبقي: ${rem} ر.س<br>
-                    • الحالة: <span class="badge ${b.status === 'مؤكد' ? 'success' : 'danger'}">${b.status}</span><br>
-                    <button onclick="editBooking('${b.id}')" class="btn" style="margin: 5px 0 10px 0; padding: 4px 10px; font-size: 11px;"><i class="fa-solid fa-pen"></i> تعديل الحجز</button><br>
+                    • القسم: <span class="badge nisah">${b.section}</span> | ${b.period}<br>
+                    • الباقي: ${rem} ر.س | الحالة: ${b.status}<br>
+                    <button onclick="editBooking('${b.id}')" class="btn" style="margin: 6px 0 10px 0; padding: 4px 10px; font-size: 11px; width: auto;"><i class="fa-solid fa-pen"></i> تعديل</button><br>
                 `;
             });
             content.innerHTML = html;
@@ -1622,7 +1642,6 @@
             document.getElementById('inv-section').innerText = b.section;
             document.getElementById('inv-price').innerText = b.price + ' ر.س';
             document.getElementById('inv-paid').innerText = b.paid + ' ر.س';
-            document.getElementById('inv-method').innerText = b.method || 'تحويل بنكي';
             document.getElementById('inv-rem').innerText = Math.max(0, ((parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0))) + ' ر.س';
             
             let badgeEl = document.getElementById('inv-status-badge');
@@ -1684,11 +1703,11 @@
             let totalExp = expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
             let totalInc = bookings.reduce((sum, b) => sum + (parseFloat(b.paid) || 0), 0);
             let html = `
-                <b>إجمالي الحجوزات المسجلة:</b> ${bookings.length} حجزاً<br>
-                <b>إجمالي العوائد الفعلية (الواصل):</b> ${totalInc.toLocaleString()} ر.س<br>
-                <b>إجمالي المصروفات والصيانة:</b> ${totalExp.toLocaleString()} ر.س<br>
+                <b>إجمالي الحجوزات:</b> ${bookings.length} حجزاً<br>
+                <b>العوائد الفعلية (الواصل):</b> ${totalInc.toLocaleString()} ر.س<br>
+                <b>إجمالي المصروفات:</b> ${totalExp.toLocaleString()} ر.س<br>
                 <hr style="margin: 10px 0; border:0; border-top:1px solid #ddd;">
-                <h3 style="color: #10ac84;">صافي الربح النهائي: ${(totalInc - totalExp).toLocaleString()} ر.س</h3>
+                <h4 style="color: #10ac84;">صافي الربح: ${(totalInc - totalExp).toLocaleString()} ر.س</h4>
             `;
             document.getElementById('financial-report-content').innerHTML = html;
         }
@@ -1727,7 +1746,7 @@
 
             let headers = [
                 "حالة الحجز", "المتبقي", "المبلغ الواصل", "إجمالي الإيجار", 
-                "القسم", "الفترة", "تاريخ الحجز (ميلادي / هجري)", 
+                "القسم", "الفترة", "تاريخ الحجز", 
                 "رقم الجوال", "اسم المستأجر", "م"
             ];
             
@@ -1754,7 +1773,7 @@
                 let valD = b ? (parseFloat(b.price) || 0) : "";
                 let valE = b ? b.section : "";
                 let valF = b ? b.period : "";
-                let valG = b ? formatDualDate(b.date) : "";
+                let valG = b ? b.date : "";
                 let valH = b ? (b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone) : "";
                 let valI = b ? b.name : "";
                 let valJ = b ? (i + 1) : "";
@@ -1770,10 +1789,6 @@
 
                     if (i % 2 === 1) {
                         cell.fill = zebraFill;
-                    }
-
-                    if (colIdx === 0 && b) {
-                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: b.status === 'مؤكد' ? '008000' : 'C00000' } };
                     }
                 });
             }
@@ -1814,11 +1829,6 @@
                 }
             }
 
-            const colWidths = [16, 12, 15, 15, 12, 12, 30, 16, 20, 6];
-            colWidths.forEach((w, idx) => {
-                worksheet.getColumn(idx + 1).width = w;
-            });
-
             let buffer = await workbook.xlsx.writeBuffer();
             let blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             saveAs(blob, 'سجل_حجوزات_شاليه_كروز.xlsx');
@@ -1845,7 +1855,7 @@
 
                         importedBookings.push({
                             id: Date.now() + idx,
-                            name: String(row[1] || 'مستأجر غير مسمى').trim(),
+                            name: String(row[1] || 'مستأجر').trim(),
                             phone: rawPhoneStr || '500000000',
                             date: row[3] || new Date().toISOString().split('T')[0],
                             period: row[4] || 'مساء',
@@ -1896,11 +1906,6 @@
             };
             reader.readAsText(file);
         }
-
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        let currentDateHijri = new Date().toLocaleDateString('ar-SA-u-ca-islamic-umalqura', options);
-        let currentDateGregorian = new Date().toLocaleDateString('ar-SA', options);
-        document.getElementById('current-date-badge').innerText = `${currentDateGregorian} | ${currentDateHijri}`;
     </script>
 </body>
 </html>
