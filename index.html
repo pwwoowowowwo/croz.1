@@ -360,7 +360,7 @@
             color: #718093;
         }
 
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px 12px;
             border: 2px solid #dcdde1;
@@ -370,7 +370,7 @@
             transition: all 0.3s;
         }
 
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        .form-group input:focus, .form-group select:focus {
             border-color: #ff9f43;
             box-shadow: 0 0 5px rgba(255, 159, 67, 0.3);
         }
@@ -1090,6 +1090,7 @@
             </div>
         </main>
 
+
         <!-- Modal السند المالي -->
         <div id="receipt-modal" class="modal" onclick="if(event.target === this) closeReceiptModal();">
             <div class="modal-content">
@@ -1130,7 +1131,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="invoice-printable-area" class="invoice-print-container">
                     <div class="invoice-header">
                         <h2>شاليه كروز</h2>
@@ -1174,84 +1174,30 @@
                         </tbody>
                     </table>
 
-                    <div class="deposit-policy-box" id="inv-policy-box">
+                    <div class="deposit-policy-box">
                         <h5><i class="fa-solid fa-circle-info"></i> سياسة العربون والتأمين والشروط:</h5>
-                        <span id="inv-policy-content">• العربون المدفوع يُعد تأكيداً رسمياً للحجز ويتم خصمه من إجمالي الإيجار.<br>• بند التأمين: يُؤخذ مبلغ التأمين قبل الدخول ويُسترد بالكامل عند سلامة المكان.<br>• في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر يسترجع العربون كاملاً.</span>
+                        • العربون المدفوع يُعد تأكيداً رسمياً للحجز ويتم خصمه من إجمالي الإيجار.<br>     
+                        • <b>بند التأمين:</b> يُؤخذ مبلغ التأمين قبل الدخول ويُسترد بالكامل عند سلامة المكان.<br>
+                        • في حال الإلغاء قبل الموعد بـ 48 ساعة أو أكثر يسترجع العربون كاملاً.
                     </div>
+                    <div class="invoice-notes" style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 6px 10px; border-radius: 6px; font-size: 10px; margin-top: 8px; line-height: 1.3;">
+                    <h5><i class="fa-solid fa-triangle-exclamation"></i> تنبيهات والشروط العامة لاستخدام الشاليه:</h5>
+                    1. الحفاظ التام على نظافة المكان والمرافق العامة وإعادتها كما كانت عند التسليم.<br>
+                    2. الالتزام بموعد الدخول والخروج المحدد بدقة لضمان راحة وخدمة جميع الضيوف.<br>
+                    3. منع استخدام الألعاب النارية أو إحداث أي إزعاج بيئي داخل النطاق السكني.<br>
+                    4. إدارة الشاليه غير مسئولة نهائياً عن فقدان الأغراض الشخصية الثمينة غير المسلمة لإدارة الاستقبال.
+                </div>
 
-                    <!-- صندوق التعليمات الجديد الذي تم إضافته ليعكس التعديلات في السند والـ PDF -->
-                    <div id="inv-instructions-container" style="background: #fff8e1; border: 1px solid #ffe0b2; color: #e65100; padding: 8px 10px; border-radius: 6px; font-size: 10px; margin-bottom: 10px; line-height: 1.4; display: block;">
-                        <h5><i class="fa-solid fa-triangle-exclamation"></i> تعليمات هامة:</h5>
-                        <span id="inv-instructions-content">يرجى المحافظة على النظافة العامة وتسليم الشاليه بالحالة التي استلمتموها بها.</span>
-                    </div>
+<!-- تفاصيل الحساب البنكي -->
+              <div class="footer-box" style="border: 1px solid #dcdcdc; padding: 6px 10px; border-radius: 4px; background-color: #ffffff; max-width: 220px; font-size: 10px; margin-left: auto; margin-top: 15px;">
+    <h5 style="margin: 0 0 4px 0; font-size: 11px; color: #111; font-weight: bold;">تفاصيل الحساب البنكي</h5>
+    <p style="margin: 1px 0;"><strong>البنك:</strong> <span id="inv-bank-name">مصرف الراجحي</span></p>
+    <p style="margin: 1px 0;"><strong>المستفيد:</strong> <span id="inv-bank-beneficiary">شاليه كروز</span></p>
+    <p style="margin: 1px 0;"><strong>الحساب:</strong> <span id="inv-bank-account">123456789012345</span></p>
+    <p style="margin: 1px 0;"><strong>الآيبان:</strong> <span id="inv-bank-iban" style="direction: ltr; display: inline-block;">SA0380000001234567890123</span></p>
+           </div>
 
-<style>
-    .footer-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 15px;
-    }
-    .footer-box {
-        background: #f8f9fa;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 10px;
-        font-size: 11px;
-        line-height: 1.5;
-    }
-    .footer-box h5 {
-        margin: 0 0 6px 0;
-        font-size: 12px;
-        color: #2f3640;
-        border-right: 3px solid #0984e3;
-        padding-right: 5px;
-    }
-    .qr-placeholder-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: #f8f9fa;
-        border: 1px dashed #a4b0be;
-        border-radius: 6px;
-        padding: 10px;
-        height: 100%;
-        text-align: center;
-        box-sizing: border-box;
-    }
-    .qr-box {
-        width: 75px;
-        height: 75px;
-        border: 2px dashed #718093;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        color: #718093;
-        margin-bottom: 5px;
-        background: #fff;
-    }
-</style>
-
-<div class="footer-grid">
-    <!-- تفاصيل الحساب البنكي -->
-    <div class="footer-box">
-        <h5>تفاصيل الحساب البنكي</h5>
-        <p style="margin: 3px 0;"><strong>البنك:</strong> <span id="inv-bank-name">مصرف الراجحي</span></p>
-        <p style="margin: 3px 0;"><strong>المستفيد:</strong> <span id="inv-bank-beneficiary">شاليه كروز</span></p>
-        <p style="margin: 3px 0;"><strong>الحساب:</strong> <span id="inv-bank-account">123456789012345</span></p>
-        <p style="margin: 3px 0;"><strong>الآيبان:</strong> <span id="inv-bank-iban" style="direction: ltr; display: inline-block;">SA0380000001234567890123</span></p>
-    </div>
-
-    <!-- مكان الكود البارز -->
-    <div class="qr-placeholder-box">
-        <div class="qr-box">رمز QR / كود</div>
-        <span style="font-size: 10px; color: #57606f;">مسح للكود أو الدفع</span>
-    </div>
-</div>
-                    <div class="signature-section" style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px;">
+                 <div class="signature-section" style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px;">
                         <div style="text-align: center; width: 45%;">
                             <p style="margin-bottom: 20px; font-weight: bold; color: #1e272e;">توقيع المستأجر</p>
                             <p style="border-bottom: 1px solid #718093; width: 120px; margin: 0 auto;"></p>
@@ -1263,7 +1209,7 @@
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;" class="no-print">
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
                     <button onclick="downloadReceiptPDFDirect()" class="btn" style="background: #eb4d4b; font-size: 12px;"><i class="fa-solid fa-file-pdf"></i> تحميل PDF</button>
                     <button onclick="sendWhatsApp()" class="btn btn-success" style="font-size: 12px;"><i class="fa-brands fa-whatsapp"></i> إرسال واتساب</button>
                     <button onclick="closeReceiptModal()" class="btn" style="background: #a4b0be; font-size: 12px;">إغلاق</button>
@@ -1807,21 +1753,7 @@
             badgeEl.innerText = b.status;
             badgeEl.className = 'badge ' + (b.status === 'مؤكد' ? 'success' : 'danger');
 
-            updateReceiptLive();
             document.getElementById('receipt-modal').style.display = 'flex';
-        }
-
-        function updateReceiptLive() {
-            let policyVal = document.getElementById('edit-policy-text').value.replace(/\n/g, '<br>');
-            document.getElementById('inv-policy-content').innerHTML = policyVal;
-
-            document.getElementById('inv-bank-name').innerText = document.getElementById('edit-bank-name').value;
-            document.getElementById('inv-bank-beneficiary').innerText = document.getElementById('edit-bank-beneficiary').value;
-            document.getElementById('inv-bank-account').innerText = document.getElementById('edit-bank-account').value;
-            document.getElementById('inv-bank-iban').innerText = document.getElementById('edit-bank-iban').value;
-
-            let instVal = document.getElementById('edit-instructions-text').value.replace(/\n/g, '<br>');
-            document.getElementById('inv-instructions-content').innerHTML = instVal;
         }
 
         function closeReceiptModal() {
@@ -1886,6 +1818,7 @@
             let mExp = mExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
             let mNet = mInc - mExp;
 
+            // حساب الأقسام الأكثر طلباً
             let sectionCounts = {};
             mBookings.forEach(b => {
                 sectionCounts[b.section] = (sectionCounts[b.section] || 0) + 1;
@@ -1893,6 +1826,7 @@
             let sortedSections = Object.entries(sectionCounts).sort((a, b) => b[1] - a[1]);
             let topSection = sortedSections.length > 0 ? `${sortedSections[0][0]} (${sortedSections[0][1]} حجز)` : 'لا توجد بيانات';
 
+            // حساب الأيام الأكثر طلباً
             let dayNamesAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
             let dayCounts = {};
             mBookings.forEach(b => {
@@ -1905,6 +1839,7 @@
             let sortedDays = Object.entries(dayCounts).sort((a, b) => b[1] - a[1]);
             let topDay = sortedDays.length > 0 ? `${sortedDays[0][0]} (${sortedDays[0][1]} حجوزات)` : 'لا توجد بيانات';
 
+            // تقديم النصائح المالية للمصروفات
             let expCategoryCounts = {};
             mExpenses.forEach(e => {
                 expCategoryCounts[e.category] = (expCategoryCounts[e.category] || 0) + (parseFloat(e.amount) || 0);
@@ -2157,6 +2092,37 @@
             };
             reader.readAsText(file);
         }
+function updateReceiptLive() {
+    // الأكواد القديمة الموجودة لديك...
+
+    // 1. تحديث نص سياسة العربون والتأمين
+    const policyInput = document.getElementById('edit-policy-text');
+    const policyBox = document.querySelector('.deposit-policy-box');
+    if (policyInput && policyBox) {
+        // نستبدل الأسطر الجديدة بـ <br> لضمان التنسيق
+        policyBox.innerHTML = '<h5><i class="fa-solid fa-circle-info"></i> سياسة العربون والتأمين والشروط:</h5>' + 
+                              policyInput.value.replace(/\n/g, '<br>');
+    }
+
+    // 2. تحديث نص التعليمات الإضافية
+    const instructionsInput = document.getElementById('edit-instructions-text');
+    const instructionsBox = document.querySelector('.invoice-notes');
+    if (instructionsInput && instructionsBox) {
+        instructionsBox.innerHTML = '<h5><i class="fa-solid fa-triangle-exclamation"></i> تنبيهات والشروط العامة لاستخدام الشاليه:</h5>' + 
+                                  instructionsInput.value.replace(/\n/g, '<br>');
+    }
+
+    // 3. تحديث تفاصيل البنك
+    const bankName = document.getElementById('edit-bank-name')?.value;
+    const bankBeneficiary = document.getElementById('edit-bank-beneficiary')?.value;
+    const bankAccount = document.getElementById('edit-bank-account')?.value;
+    const bankIban = document.getElementById('edit-bank-iban')?.value;
+
+    if (document.getElementById('inv-bank-name')) document.getElementById('inv-bank-name').innerText = bankName;
+    if (document.getElementById('inv-bank-beneficiary')) document.getElementById('inv-bank-beneficiary').innerText = bankBeneficiary;
+    if (document.getElementById('inv-bank-account')) document.getElementById('inv-bank-account').innerText = bankAccount;
+    if (document.getElementById('inv-bank-iban')) document.getElementById('inv-bank-iban').innerText = bankIban;
+}
     </script>
 </body>
 </html>
