@@ -653,47 +653,63 @@
         }
 
         @media print {
-            @page {
-                size: A4 portrait;
-                margin: 0mm;
-            }
-            body {
-                background: white !important;
-                margin: 0 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            body * {
-                visibility: hidden;
-            }
-            #receipt-modal, #receipt-modal * {
-                visibility: visible;
-            }
-            #receipt-modal {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: auto;
-                background: white !important;
-                display: flex !important;
-                align-items: flex-start;
-                justify-content: center;
-                padding: 0;
-                z-index: 99999;
-            }
-            .modal-content {
-                box-shadow: none !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                border: none !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
+    @page {
+        size: A4 portrait;
+        margin: 5mm; /* هامش بسيط جداً لضمان عدم قص الأطراف في الطباعة والـ PDF */
+    }
+
+    /* إجبار المتصفح على معالجة الخطوط والحدود بأقصى دقة ووضوح ومنع البهتان */
+    *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        text-rendering: geometricPrecision !important;
+        -webkit-font-smoothing: antialiased !important;
+    }
+
+    body {
+        background: white !important;
+        margin: 0 !important;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    #receipt-modal, #receipt-modal * {
+        visibility: visible;
+    }
+
+    #receipt-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: white !important;
+        display: flex !important;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 0;
+        z-index: 99999;
+    }
+
+    .modal-content {
+        box-shadow: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px !important;
+        margin: 0 !important;
+        border: none !important;
+        /* منع تقطيع العناصر أو الجداول بشكل سيء عند التوليد */
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
