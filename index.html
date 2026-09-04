@@ -697,9 +697,6 @@
     </style>
 </head>
 <body>
-    </style>
-</head>
-<body>
 
     <div id="splash-screen">
         <div class="splash-logo">
@@ -997,7 +994,6 @@
                                     <th>الواصل</th>
                                     <th>المتبقي</th>
                                     <th>الحالة</th>
-                                    <th>إجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="bookings-table-body"></tbody>
@@ -1246,9 +1242,13 @@
                     </div>
                 </div>
 
+                <!-- أزرار الإجراءات داخل نافذة السند المفتوحة عند الضغط على اسم العميل -->
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                    <button onclick="quickMarkAsPaidModal()" class="btn btn-success" style="font-size: 12px;"><i class="fa-solid fa-check"></i> تأكيد الحجز (دفع كامل)</button>
+                    <button onclick="editBookingFromModal()" class="btn btn-secondary" style="font-size: 12px; background: #54a0ff;"><i class="fa-solid fa-pen"></i> تعديل الحجز</button>
                     <button onclick="downloadReceiptPDFDirect()" class="btn" style="background: #eb4d4b; font-size: 12px;"><i class="fa-solid fa-file-pdf"></i> تحميل PDF</button>
                     <button onclick="sendWhatsApp()" class="btn btn-success" style="font-size: 12px;"><i class="fa-brands fa-whatsapp"></i> إرسال واتساب</button>
+                    <button onclick="deleteBookingFromModal()" class="btn badge danger" style="font-size: 12px; border: none; padding: 10px; cursor: pointer; color: white;"><i class="fa-solid fa-trash"></i> حذف الحجز</button>
                     <button onclick="closeReceiptModal()" class="btn" style="background: #a4b0be; font-size: 12px;">إغلاق</button>
                 </div>
             </div>
@@ -1570,53 +1570,10 @@
                 let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 let tr = document.createElement('tr');
                 
-                let receiptBtn = document.createElement('button');
-                receiptBtn.className = 'btn';
-                receiptBtn.style.cssText = 'padding: 6px 10px; font-size: 11px; margin-left: 4px; width:auto;';
-                receiptBtn.title = 'عرض السند';
-                receiptBtn.innerHTML = '<i class="fa-solid fa-receipt"></i>';
-                receiptBtn.onclick = function() { openReceipt(b); };
-
-                let tdActions = document.createElement('td');
-                
-                let btnPay = document.createElement('button');
-                btnPay.className = 'btn btn-success';
-                btnPay.style.cssText = 'padding: 6px 10px; font-size: 11px; margin-left: 4px; width:auto;';
-                btnPay.title = 'دفع كامل';
-                btnPay.innerHTML = '<i class="fa-solid fa-check"></i>';
-                btnPay.onclick = function() { quickMarkAsPaid(b.id); };
-                tdActions.appendChild(btnPay);
-
-                let btnEdit = document.createElement('button');
-                btnEdit.className = 'btn';
-                btnEdit.style.cssText = 'padding: 6px 10px; font-size: 11px; background: #54a0ff; margin-left: 4px; width:auto;';
-                btnEdit.title = 'تعديل';
-                btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i>';
-                btnEdit.onclick = function() { editBooking(b.id); };
-                tdActions.appendChild(btnEdit);
-
-                tdActions.appendChild(receiptBtn);
-
-                let btnPdf = document.createElement('button');
-                btnPdf.className = 'btn';
-                btnPdf.style.cssText = 'padding: 6px 10px; font-size: 11px; background: #eb4d4b; margin-left: 4px; width:auto;';
-                btnPdf.title = 'PDF';
-                btnPdf.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
-                btnPdf.onclick = function() { downloadReceiptPDF(b.id); };
-                tdActions.appendChild(btnPdf);
-
-                let btnDel = document.createElement('button');
-                btnDel.className = 'btn badge danger';
-                btnDel.style.cssText = 'padding: 6px 10px; border:none; cursor:pointer; width:auto;';
-                btnDel.title = 'حذف';
-                btnDel.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                btnDel.onclick = function() { deleteBooking(b.id); };
-                tdActions.appendChild(btnDel);
-
                 let badgeClass = b.section === 'نساء' ? 'nisah' : (b.section === 'رجال' ? 'rijal' : 'qismain');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><b>${b.name}</b></td>
+                    <td><b style="color: #54a0ff; cursor: pointer; text-decoration: underline;" onclick='openReceipt(${JSON.stringify(b)})'>${b.name}</b></td>
                     <td style="direction: ltr; text-align: right;">${displayPhone}</td>
                     <td>${b.date}</td>
                     <td>${b.period}</td>
@@ -1626,7 +1583,6 @@
                     <td style="color: #c62828; font-weight: bold;">${rem} ر.س</td>
                     <td><span class="badge ${b.status === 'مؤكد' ? 'success' : 'danger'}">${b.status}</span></td>
                 `;
-                tr.appendChild(tdActions);
                 tbody.appendChild(tr);
             });
         }
@@ -1795,6 +1751,28 @@
 
         function closeReceiptModal() {
             document.getElementById('receipt-modal').style.display = 'none';
+        }
+
+        function quickMarkAsPaidModal() {
+            if(!activeReceipt) return;
+            quickMarkAsPaid(activeReceipt.id);
+            let updated = bookings.find(item => String(item.id) === String(activeReceipt.id));
+            if(updated) openReceipt(updated);
+            alert('تم تأكيد الحجز ودفع كامل المبلغ!');
+        }
+
+        function editBookingFromModal() {
+            if(!activeReceipt) return;
+            closeReceiptModal();
+            editBooking(activeReceipt.id);
+        }
+
+        function deleteBookingFromModal() {
+            if(!activeReceipt) return;
+            if(confirm('هل أنت متأكد من حذف هذا الحجز؟')) {
+                deleteBooking(activeReceipt.id);
+                closeReceiptModal();
+            }
         }
 
         function downloadReceiptPDF(id) {
@@ -2154,4 +2132,3 @@
         }
     </script>
 </body>
-</html>
