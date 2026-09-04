@@ -1194,15 +1194,42 @@
                         3. منع استخدام الألعاب النارية أو إحداث أي إزعاج بيئي داخل النطاق السكني.<br>
                         4. إدارة الشاليه غير مسئولة نهائياً عن فقدان الأغراض الشخصية الثمينة غير المسلمة لإدارة الاستقبال.
                     </div>
+<!-- تفاصيل الحساب البنكي والصورة بنسبة 50/50 -->
+<div class="footer-box" style="display: flex; gap: 4px; border: 1px solid #e0e0e0; padding: 4px; border-radius: 3px; background-color: #ffffff; max-width: 270px; margin-left: auto; margin-top: 6px; box-sizing: border-box;">
+    
+    <!-- القسم الأيمن: بيانات الحساب (50%) -->
+    <div style="flex: 0 0 50%; max-width: 50%; box-sizing: border-box;">
+        <h5 style="margin: 0 0 3px 0; font-size: 7px; color: #111; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 2px;">تفاصيل الحساب البنكي</h5>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px;">
+            <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px;">
+                <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">البنك</span>
+                <strong id="inv-bank-name" style="color: #2c3e50; font-size: 6px; word-break: break-word;">مصرف الراجحي</strong>
+            </div>
+            <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px;">
+                <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">المستفيد</span>
+                <strong id="inv-bank-beneficiary" style="color: #2c3e50; font-size: 6px; word-break: break-word;">شاليه كروز</strong>
+            </div>
+        </div>
 
-                    <!-- تفاصيل الحساب البنكي -->
-                    <div class="footer-box" style="border: 1px solid #dcdcdc; padding: 6px 10px; border-radius: 4px; background-color: #ffffff; max-width: 220px; font-size: 10px; margin-left: auto; margin-top: 15px;">
-                        <h5 style="margin: 0 0 4px 0; font-size: 11px; color: #111; font-weight: bold;">تفاصيل الحساب البنكي</h5>
-                        <p style="margin: 1px 0;"><strong>البنك:</strong> <span id="inv-bank-name">مصرف الراجحي</span></p>
-                        <p style="margin: 1px 0;"><strong>المستفيد:</strong> <span id="inv-bank-beneficiary">شاليه كروز</span></p>
-                        <p style="margin: 1px 0;"><strong>الحساب:</strong> <span id="inv-bank-account">123456789012345</span></p>
-                        <p style="margin: 1px 0;"><strong>الآيبان:</strong> <span id="inv-bank-iban" style="direction: ltr; display: inline-block;">SA0380000001234567890123</span></p>
-                    </div>
+        <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px; margin-bottom: 2px;">
+            <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">رقم الحساب</span>
+            <strong id="inv-bank-account" style="color: #2c3e50; font-family: monospace; font-size: 5.5px; word-break: break-all; display: block;">123456789012345</strong>
+        </div>
+
+        <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px;">
+            <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">الآيبان (IBAN)</span>
+            <strong id="inv-bank-iban" style="color: #2c3e50; font-family: monospace; font-size: 5px; direction: ltr; display: block; text-align: left; word-break: break-all;">SA0380000001234567890123</strong>
+        </div>
+    </div>
+
+    <!-- القسم الأيسر: الصورة (50%) -->
+    <div style="flex: 0 0 50%; max-width: 50%; display: flex; align-items: center; justify-content: center; background: #fafafa; border: 1px solid #eaeded; border-radius: 2px; padding: 2px; box-sizing: border-box;">
+        <img src="ضع_رابط_الصورة_هنا" alt="صورة" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 2px;">
+    </div>
+
+</div>
+
 
                     <div class="signature-section" style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px;">
                         <div style="text-align: center; width: 45%;">
