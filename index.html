@@ -1227,41 +1227,38 @@
                         4. إدارة الشاليه غير مسئولة نهائياً عن فقدان الأغراض الشخصية الثمينة غير المسلمة لإدارة الاستقبال.
                     </div>
 
-                    <!-- تفاصيل الحساب البنكي والصورة بنسبة 50/50 -->
-                    <div class="footer-box" style="display: flex; gap: 4px; border: 1px solid #e0e0e0; padding: 4px; border-radius: 3px; background-color: #ffffff; max-width: 270px; margin-left: auto; margin-top: 6px; box-sizing: border-box;">
-                        
-                        <!-- القسم الأيمن: بيانات الحساب (50%) -->
-                        <div style="flex: 0 0 50%; max-width: 50%; box-sizing: border-box;">
-                            <h5 style="margin: 0 0 3px 0; font-size: 10px; color: #111; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 2px;">تفاصيل الحساب البنكي</h5>
-                            
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px;">
-                                <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px;">
-                                    <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">البنك</span>
-                                    <strong id="inv-bank-name" style="color: #2c3e50; font-size: 6px; word-break: break-word;">مصرف الراجحي</strong>
-                                </div>
-                                <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px;">
-                                    <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">المستفيد</span>
-                                    <strong id="inv-bank-beneficiary" style="color: #2c3e50; font-size: 6px; word-break: break-word;">شاليه كروز</strong>
-                                </div>
-                            </div>
+                    <!-- تفاصيل الحساب البنكي والصورة بنسبة 50/50 --><div class="footer-box" style="display: flex; gap: 4px; border: 1px solid #e0e0e0; padding: 6px; border-radius: 3px; background-color: #ffffff; max-width: 320px; margin-left: auto; margin-top: 6px; box-sizing: border-box;">
+    
+    <div style="flex: 0 0 55%; max-width: 55%; box-sizing: border-box;">
+        <h5 style="margin: 0 0 4px 0; font-size: 10px; color: #111; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 2px;">تفاصيل الحساب البنكي</h5>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px;">
+            <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 3px 4px; border-radius: 2px;">
+                <span style="color: #777; font-size: 5px; display: block; margin-bottom: 1px;">البنك</span>
+                <strong id="inv-bank-name" contenteditable="true" oninput="saveEdits()" style="color: #2c3e50; font-size: 6px; word-break: break-word; outline: none; display: block;">مصرف الراجحي</strong>
+            </div>
+            <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 3px 4px; border-radius: 2px;">
+                <span style="color: #777; font-size: 5px; display: block; margin-bottom: 1px;">المستفيد</span>
+                <strong id="inv-bank-beneficiary" contenteditable="true" oninput="saveEdits()" style="color: #2c3e50; font-size: 7px; word-break: break-word; outline: none; display: block; min-height: 12px;">شاليه كروز</strong>
+            </div>
+        </div>
 
-                            <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px; margin-bottom: 2px;">
-                                <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">رقم الحساب</span>
-                                <strong id="inv-bank-account" style="color: #2c3e50; font-family: monospace; font-size: 8px; word-break: break-all; display: block;">123456789012345</strong>
-                            </div>
+        <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 3px 4px; border-radius: 2px; margin-bottom: 4px;">
+            <span style="color: #777; font-size: 5px; display: block; margin-bottom: 1px;">رقم الحساب</span>
+            <strong id="inv-bank-account" contenteditable="true" oninput="saveEdits()" style="color: #2c3e50; font-family: monospace; font-size: 8px; word-break: break-all; display: block; outline: none;">123456789012345</strong>
+        </div>
 
-                            <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 1px 2px; border-radius: 2px;">
-                                <span style="color: #777; font-size: 5px; display: block; margin-bottom: -1px;">الآيبان (IBAN)</span>
-                                <strong id="inv-bank-iban" style="color: #2c3e50; font-family: monospace; font-size: 8px; direction: ltr; display: block; text-align: left; word-break: break-all;">SA0380000001234567890123</strong>
-                            </div>
-                        </div>
+        <div style="background: #f8f9fa; border: 1px solid #eaeded; padding: 4px 6px; border-radius: 2px;">
+            <span style="color: #777; font-size: 5px; display: block; margin-bottom: 1px;">الآيبان (IBAN)</span>
+            <strong id="inv-bank-iban" contenteditable="true" oninput="saveEdits()" style="color: #2c3e50; font-family: monospace; font-size: 8px; direction: ltr; display: block; text-align: left; word-break: break-all; outline: none; min-height: 14px;">SA0380000001234567890123</strong>
+        </div>
+    </div>
 
-                        <!-- القسم الأيسر: الصورة (50%) -->
-                        <div style="flex: 0 0 50%; max-width: 50%; display: flex; align-items: center; justify-content: center; background: #fafafa; border: 1px solid #eaeded; border-radius: 2px; padding: 2px; box-sizing: border-box;">
-                            <img src="https://pwwoowowowwo.github.io/croz.1/Aigonh.png.PNG" alt="QR Code" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 2px;">
-                        </div>
+    <div style="flex: 0 0 45%; max-width: 45%; display: flex; align-items: center; justify-content: center; background: #fafafa; border: 1px solid #eaeded; border-radius: 2px; padding: 2px; box-sizing: border-box;">
+        <img src="https://pwwoowowowwo.github.io/croz.1/Aigonh.png.PNG" alt="QR Code" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 2px;">
+    </div>
 
-                    </div>
+</div>
 
                     <div class="signature-section" style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 11px;">
                         <div style="text-align: center; width: 45%;">
@@ -2263,6 +2260,21 @@ function resetZoom() {
     currentZoom = 1;
     document.body.style.zoom = currentZoom;
 }
+<script>
+    function saveEdits() {
+        localStorage.setItem('saved_bank_name', document.getElementById('inv-bank-name').innerHTML);
+        localStorage.setItem('saved_beneficiary', document.getElementById('inv-bank-beneficiary').innerHTML);
+        localStorage.setItem('saved_account', document.getElementById('inv-bank-account').innerHTML);
+        localStorage.setItem('saved_iban', document.getElementById('inv-bank-iban').innerHTML);
+    }
+
+    window.onload = function() {
+        if (localStorage.getItem('saved_bank_name')) document.getElementById('inv-bank-name').innerHTML = localStorage.getItem('saved_bank_name');
+        if (localStorage.getItem('saved_beneficiary')) document.getElementById('inv-bank-beneficiary').innerHTML = localStorage.getItem('saved_beneficiary');
+        if (localStorage.getItem('saved_account')) document.getElementById('inv-bank-account').innerHTML = localStorage.getItem('saved_account');
+        if.getItem = localStorage.getItem('saved_iban'); // تم التصحيح للتحقق السليم
+        if (localStorage.getItem('saved_iban')) document.getElementById('inv-bank-iban').innerHTML = localStorage.getItem('saved_iban');
+    };
 
     </script>
 </body>
