@@ -1145,11 +1145,12 @@
         <div id="receipt-modal" class="modal" onclick="if(event.target === this) closeReceiptModal();">
             <div class="modal-content">
                 <!-- زر إظهار/إخفاء قسم التعديلات على شكل أيقونة ترس -->
-                <div class="no-print" style="text-align: left; margin-bottom: 8px;">
-                    <button onclick="toggleReceiptSettings()" title="إعدادات السند والشروط" style="background: #f1f2f6; border: 1px solid #dcdde1; border-radius: 6px; padding: 6px 10px; cursor: pointer; color: #2f3640; font-size: 14px;">
-                        <i class="fa-solid fa-gear"></i>
-                    </button>
-                </div>
+<div class="no-print" style="text-align: left; margin-top: 30px; margin-bottom: 8px;">
+    <button onclick="toggleReceiptSettings()" title="إعدادات السند والشروط" style="background: #f1f2f6; border: 1px solid #dcdde1; border-radius: 6px; padding: 6px 10px; cursor: pointer; color: #2f3640; font-size: 14px;">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+</div>
+
 
                 <!-- قسم تعديل بيانات السند والشروط (مخفي افتراضياً) -->
                 <div id="receipt-settings-section" class="no-print" style="display: none; background: #f1f2f6; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #dcdde1;">
