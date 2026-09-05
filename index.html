@@ -2260,20 +2260,6 @@ function resetZoom() {
     currentZoom = 1;
     document.body.style.zoom = currentZoom;
 }
-    function saveEdits() {
-        localStorage.setItem('saved_bank_name', document.getElementById('inv-bank-name').innerHTML);
-        localStorage.setItem('saved_beneficiary', document.getElementById('inv-bank-beneficiary').innerHTML);
-        localStorage.setItem('saved_account', document.getElementById('inv-bank-account').innerHTML);
-        localStorage.setItem('saved_iban', document.getElementById('inv-bank-iban').innerHTML);
-    }
-
-    window.onload = function() {
-        if (localStorage.getItem('saved_bank_name')) document.getElementById('inv-bank-name').innerHTML = localStorage.getItem('saved_bank_name');
-        if (localStorage.getItem('saved_beneficiary')) document.getElementById('inv-bank-beneficiary').innerHTML = localStorage.getItem('saved_beneficiary');
-        if (localStorage.getItem('saved_account')) document.getElementById('inv-bank-account').innerHTML = localStorage.getItem('saved_account');
-        if.getItem = localStorage.getItem('saved_iban'); // تم التصحيح للتحقق السليم
-        if (localStorage.getItem('saved_iban')) document.getElementById('inv-bank-iban').innerHTML = localStorage.getItem('saved_iban');
-    }
 
     </script>
 </body>
