@@ -734,8 +734,11 @@
                 <div class="main-header-banner">
                     <div>
                         <h2><i class="fa-solid fa-house-chimney-window"></i> شالية كروز </h2>
-                        <p>نظام إدارة الحجوزات والماليات الشامل</p>
- <span style="font-size: 7px; font-weight: bold; color: #718096; background: #edf2f7; padding: 3px 8px; border-radius: 4px;">v2.0.1</span>
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+    <p style="margin: 0;">نظام إدارة الحجوزات والماليات الشامل</p>
+    <span onclick="openReleaseNotesModal()" style="cursor: pointer; font-size: 14px; display: inline-block;" title="تعليمات التحديث الأخير">📨</span>
+    <span style="font-size: 11px; font-weight: bold; color: #ffffff;">v2.0.1</span>
+                     </div>
                     </div>
                 </div>
 
@@ -744,6 +747,18 @@
                         <i class="fa-solid fa-bars"></i>
                     </button>
                     <div style="display: flex; gap: 6px; align-items: center;">
+<div class="zoom-panel">
+    <button class="zoom-btn" onclick="zoomOut()" title="تصغير الشاشة">
+        <span>A-</span>
+    </button>
+    <button class="zoom-btn reset-btn" onclick="resetZoom()" title="الحجم الافتراضي">
+        <span>A</span>
+    </button>
+    <button class="zoom-btn" onclick="zoomIn()" title="تكبير الشاشة">
+        <span>A+</span>
+    </button>
+</div>
+
                         <select id="period-selector" onchange="updateDashboard()" style="padding: 6px 10px; border-radius: 6px; border: 2px solid #dcdde1; font-weight: 700; font-size: 12px;">
                             <option value="all">جميع الأشهر</option>
                             <option value="current">الشهر الحالي</option>
@@ -1272,6 +1287,41 @@
             </div>
         </div>
     </div>
+<!-- نافذة تعليمات التحديث الأخير وحقوق المطور -->
+<div id="releaseNotesModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; padding:22px; border-radius:12px; width:90%; max-width:380px; box-shadow: 0 6px 15px rgba(0,0,0,0.25); text-align: right; direction: rtl; font-family: Tahoma, sans-serif;">
+        
+        <!-- عنوان النافذة -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding-bottom: 10px; margin-bottom: 12px;">
+            <h3 style="margin:0; font-size:16px; color:#2d3748;">📌 تعليمات التحديث الأخير</h3>
+            <span style="font-size: 11px; background: #edf2f7; color: #4a5568; padding: 2px 6px; border-radius: 4px; font-weight: bold;">v2.0.1</span>
+        </div>
+
+        <!-- النقاط بخط صغير ومرتب -->
+        <div style="font-size: 12px; color: #4a5568; line-height: 1.8; max-height: 220px; overflow-y: auto; margin-bottom: 15px;">
+            <p style="margin: 0 0 6px 0; font-weight: bold; color: #2b6cb0;">✨ تفاصيل الإصدار الجديد:</p>
+            <ul style="margin: 0; padding-right: 18px;">
+                <li style="margin-bottom: 5px;">تم ترتيب الواجهة وتحسين الأداء العام للنظام لتصبح أسرع.</li>
+                <li style="margin-bottom: 5px;">إضافة ميزة عرض رقم النسخة والاطلاع على التحديثات بسهولة.</li>
+                <li style="margin-bottom: 5px;">نقل ازرار الستند وطباعة pdf بالظغط على اسم المستاجر.</li>
+                <li style="margin-bottom: 5px;">اضافة امكانية تعديل على السند بالتعليمات والتنبيهات الخاصة بالشاليةوعلى بيانات البنكية.</li>
+            </ul>
+        </div>
+
+        <!-- حقوق المطور بالانجليزي -->
+        <div style="border-top: 1px solid #edf2f7; padding-top: 10px; margin-bottom: 15px; text-align: center;">
+            <p style="margin: 0; font-size: 11px; color: #718096; direction: ltr; font-family: Arial, sans-serif;">
+                © 2026 جميع الحقوق محفوظه• Fahad Al-Mikhlafi
+            </p>
+        </div>
+
+        <!-- زر الإغلاق -->
+        <div style="text-align: center;">
+            <button onclick="closeReleaseNotesModal()" style="padding: 6px 20px; background:#3182ce; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size: 12px; width: 100%;">فهمت، شكراً</button>
+        </div>
+
+    </div>
+</div>
 
     <!-- عنصر مخفي لطباعة التقرير المالي الشامل PDF -->
     <div id="financial-report-print-container" style="display:none; background: #fff; color: #2f3640; font-family: 'Cairo', sans-serif; text-align: right; padding: 20px;">
@@ -2186,6 +2236,34 @@
             if (document.getElementById('inv-bank-account')) document.getElementById('inv-bank-account').innerText = bankAccount;
             if (document.getElementById('inv-bank-iban')) document.getElementById('inv-bank-iban').innerText = bankIban;
         }
+function openReleaseNotesModal() {
+    document.getElementById('releaseNotesModal').style.display = 'flex';
+}
+
+function closeReleaseNotesModal() {
+    document.getElementById('releaseNotesModal').style.display = 'none';
+}
+let currentZoom = 1; // الحجم الطبيعي
+
+function zoomIn() {
+    if (currentZoom < 1.3) { // أقصى حد للتكبير 100%
+        currentZoom += 0.1;
+        document.body.style.zoom = currentZoom;
+    }
+}
+
+function zoomOut() {
+    if (currentZoom > 0.8) { // أقصى حد للتصغير 90% لتجنب صغر الخطوط لدرجة مزعجة
+        currentZoom -= 0.1;
+        document.body.style.zoom = currentZoom;
+    }
+}
+
+function resetZoom() {
+    currentZoom = 1;
+    document.body.style.zoom = currentZoom;
+}
+
     </script>
 </body>
 </html>
