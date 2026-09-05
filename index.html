@@ -735,6 +735,7 @@
                     <div>
                         <h2><i class="fa-solid fa-house-chimney-window"></i> شالية كروز </h2>
                         <p>نظام إدارة الحجوزات والماليات الشامل</p>
+ <span style="font-size: 7px; font-weight: bold; color: #718096; background: #edf2f7; padding: 3px 8px; border-radius: 4px;">v2.0.1</span>
                     </div>
                 </div>
 
@@ -969,6 +970,25 @@
                 </div>
                 <div class="card-box">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                        <!-- قائمة الفلترة بالأشهر الخاصة بسجل الحجوزات -->
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label style="font-size: 12px; font-weight: 700; color: #2f3640; white-space: nowrap;">عرض شهر:</label>
+                            <select id="reservations-month-selector" onchange="renderBookingsTable()" style="padding: 8px 12px; border-radius: 8px; border: 2px solid #dcdde1; font-weight: 700; font-size: 12px; width: 100%;">
+                                <option value="0">يناير</option>
+                                <option value="1">فبراير</option>
+                                <option value="2">مارس</option>
+                                <option value="3">أبريل</option>
+                                <option value="4">مايو</option>
+                                <option value="5">يونيو</option>
+                                <option value="6">يوليو</option>
+                                <option value="7">أغسطس</option>
+                                <option value="8" selected>سبتمبر</option>
+                                <option value="9">أكتوبر</option>
+                                <option value="10">نوفمبر</option>
+                                <option value="11">ديسمبر</option>
+                            </select>
+                        </div>
+
                         <input type="text" id="search-input" onkeyup="filterBookings()" placeholder="ابحث بالاسم، الجوال، أو التاريخ..." style="padding: 10px 12px; border-radius: 8px; border: 2px solid #dcdde1; width: 100%; font-size: 12px;">
                         
                         <div style="display: flex; gap: 8px;">
@@ -1263,7 +1283,6 @@
     </div>
 
     <script>
-        // تم مسح كافة الأسماء والحجوزات التجريبية لتكون فارغة تماماً
         let bookings = JSON.parse(localStorage.getItem('cruise_bookings')) || [];
         let expenses = JSON.parse(localStorage.getItem('cruise_expenses')) || [];
 
@@ -1281,13 +1300,20 @@
                 }
             }, 500);
             
-            let today = new Date().toISOString().split('T')[0];
+            // استخدام توقيت السعودية (GMT+3)
+            let saudiDateStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' });
+            let saudiDate = new Date(saudiDateStr);
+            let today = saudiDate.toISOString().split('T')[0];
+            
             document.getElementById('b-date').value = today;
             document.getElementById('e-date').value = today;
             document.getElementById('calendar-search-date').value = today;
-            document.getElementById('cal-month-select').value = new Date().getMonth();
-            currentCalendarMonth = new Date().getMonth();
-            currentCalendarYear = new Date().getFullYear();
+            
+            // ضبط الافتراضي على الشهر الحالي
+            document.getElementById('cal-month-select').value = saudiDate.getMonth();
+            document.getElementById('reservations-month-selector').value = saudiDate.getMonth();
+            currentCalendarMonth = saudiDate.getMonth();
+            currentCalendarYear = saudiDate.getFullYear();
 
             saveAndRefresh();
         });
@@ -1419,7 +1445,8 @@
 
             document.getElementById('b-edit-id').value = '';
             document.getElementById('quick-booking-form').reset();
-            let today = new Date().toISOString().split('T')[0];
+            let saudiDateStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' });
+            let today = new Date(saudiDateStr).toISOString().split('T')[0];
             document.getElementById('b-date').value = today;
             document.getElementById('form-title-text').innerHTML = `<i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> حجز جديد للشاليه`;
             saveAndRefresh();
@@ -1477,7 +1504,8 @@
             expenses.push(newE);
             saveAndRefresh();
             e.target.reset();
-            let today = new Date().toISOString().split('T')[0];
+            let saudiDateStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' });
+            let today = new Date(saudiDateStr).toISOString().split('T')[0];
             document.getElementById('e-date').value = today;
             alert('تم تسجيل المصروف بنجاح!');
         }
@@ -1499,7 +1527,8 @@
 
         function updateDashboard() {
             let filterVal = document.getElementById('period-selector').value;
-            let currentMonthStr = new Date().toISOString().slice(0, 7);
+            let saudiDateStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' });
+            let currentMonthStr = new Date(saudiDateStr).toISOString().slice(0, 7);
 
             let filteredBookings = bookings.filter(b => {
                 if (filterVal === 'all') return true;
@@ -1529,7 +1558,7 @@
             document.getElementById('stat-expenses').innerText = totalExp.toLocaleString() + ' ر.س';
             document.getElementById('stat-net').innerText = net.toLocaleString() + ' ر.س';
 
-            let todayStr = new Date().toISOString().slice(0, 10);
+            let todayStr = new Date(saudiDateStr).toISOString().slice(0, 10);
             let todayBookings = bookings.filter(b => b.date === todayStr);
             let alertBox = document.getElementById('today-alert-container');
             if(todayBookings.length > 0) {
@@ -1562,11 +1591,21 @@
         function renderBookingsTable() {
             let tbody = document.getElementById('bookings-table-body');
             tbody.innerHTML = '';
-            if(bookings.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #a4b0be; padding: 20px;">لا توجد حجوزات لعرضها، قم بإضافة حجز جديد.</td></tr>`;
+            
+            let selectedMonth = parseInt(document.getElementById('reservations-month-selector').value);
+            
+            let monthBookings = bookings.filter(b => {
+                if(!b.date) return false;
+                let bDateObj = new Date(b.date);
+                return !isNaN(bDateObj.getTime()) && bDateObj.getMonth() === selectedMonth;
+            });
+
+            if(monthBookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #a4b0be; padding: 20px;">لا توجد حجوزات مسجلة في شهر ${monthNames[selectedMonth]}.</td></tr>`;
                 return;
             }
-            bookings.forEach((b, index) => {
+
+            monthBookings.forEach((b, index) => {
                 let rem = Math.max(0, (parseFloat(b.price) || 0) - (parseFloat(b.paid) || 0));
                 let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
                 let tr = document.createElement('tr');
@@ -1732,7 +1771,7 @@
         function openReceipt(bInput) {
             let b = typeof bInput === 'string' ? JSON.parse(bInput) : bInput;
             activeReceipt = b;
-            let currentDateTimeStr = new Date().toLocaleString('ar-SA');
+            let currentDateTimeStr = new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' });
             let displayPhone = b.phone.startsWith('966') ? '+' + b.phone : '+966' + b.phone;
             
             document.getElementById('inv-id').innerText = '#' + b.id;
@@ -1825,7 +1864,8 @@
         }
 
         function generateReport() {
-            let now = new Date();
+            let saudiDateStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' });
+            let now = new Date(saudiDateStr);
             let currentMonthIndex = now.getMonth();
             let currentYear = now.getFullYear();
             let currentMonthName = monthNames[currentMonthIndex];
@@ -1916,7 +1956,15 @@
         }
 
         async function exportToExcel() {
-            let currentMonthName = monthNames[currentCalendarMonth];
+            let selectedMonth = parseInt(document.getElementById('reservations-month-selector').value);
+            let currentMonthName = monthNames[selectedMonth];
+            
+            let monthBookings = bookings.filter(b => {
+                if(!b.date) return false;
+                let bDateObj = new Date(b.date);
+                return !isNaN(bDateObj.getTime()) && bDateObj.getMonth() === selectedMonth;
+            });
+
             let workbook = new ExcelJS.Workbook();
             let worksheet = workbook.addWorksheet(`حجوزات ${currentMonthName}`, { views: [{ rtl: true }] });
 
@@ -1964,12 +2012,12 @@
                 cell.border = headerBorder;
             });
 
-            for (let i = 0; i < Math.max(bookings.length, 1); i++) {
+            for (let i = 0; i < Math.max(monthBookings.length, 1); i++) {
                 let rowIdx = 5 + i;
                 let row = worksheet.getRow(rowIdx);
                 row.height = 20;
 
-                let b = bookings[i];
+                let b = monthBookings[i];
                 let valA = b ? b.status : "";
                 let valB = b ? { formula: `D${rowIdx}-C${rowIdx}` } : "";
                 let valC = b ? (parseFloat(b.paid) || 0) : "";
@@ -1996,7 +2044,7 @@
                 });
             }
 
-            let summaryRowIdx = 5 + Math.max(bookings.length, 1) + 1;
+            let summaryRowIdx = 5 + Math.max(monthBookings.length, 1) + 1;
             worksheet.mergeCells(`E${summaryRowIdx}:J${summaryRowIdx}`);
             let summaryLabelCell = worksheet.getCell(`E${summaryRowIdx}`);
             summaryLabelCell.value = "المجموع / الإجمالي النهائي";
@@ -2016,7 +2064,7 @@
                     right: { style: 'thin', color: { argb: 'CCCCCC' } }
                 };
 
-                let lastDataRow = 4 + Math.max(bookings.length, 1);
+                let lastDataRow = 4 + Math.max(monthBookings.length, 1);
                 if (colIdx === 2) {
                     cell.value = { formula: `SUM(B5:B${lastDataRow})` };
                     cell.font = { name: 'Calibri', size: 10, bold: true };
@@ -2034,7 +2082,7 @@
 
             let buffer = await workbook.xlsx.writeBuffer();
             let blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'سجل_حجوزات_شاليه_كروز.xlsx');
+            saveAs(blob, `سجل_حجوزات_شهر_${currentMonthName}_شاليه_كروز.xlsx`);
         }
 
         function importFromExcel(event) {
@@ -2056,11 +2104,14 @@
                         if (rawPhoneStr.startsWith('966')) rawPhoneStr = rawPhoneStr.substring(3);
                         if (rawPhoneStr.startsWith('0')) rawPhoneStr = rawPhoneStr.substring(1);
 
+                        let saudiDateStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' });
+                        let defaultDate = new Date(saudiDateStr).toISOString().split('T')[0];
+
                         importedBookings.push({
                             id: Date.now() + idx,
                             name: String(row[1] || 'مستأجر').trim(),
                             phone: rawPhoneStr || '500000000',
-                            date: row[3] || new Date().toISOString().split('T')[0],
+                            date: row[3] || defaultDate,
                             period: row[4] || 'مساء',
                             section: row[5] || 'قسمين',
                             price: parseFloat(row[6]) || 0,
