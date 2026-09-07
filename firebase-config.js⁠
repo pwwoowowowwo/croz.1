@@ -1,0 +1,78 @@
+// استدعاء مكتبات Firebase من الرابط المباشر (CDN)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+// إعدادات الاتصال بقاعدة البيانات الخاصة بك
+const firebaseConfig = {
+    databaseURL: "https://rksti-a10cd-default-rtdb.firebaseio.com/"
+};
+
+// تهيئة التطبيق وقاعدة البيانات
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/**
+ * دالة لحفظ أو إضافة بيانات جديدة
+ * @param {string} path - مسار الجدول أو القسم (مثل: 'bookings', 'expenses')
+ * @param {string} id - معرف فريد (مثل رقم الحجز أو معرف المصروف)
+ * @param {Object} data - البيانات المراد حفظها
+ */
+export async function saveData(path, id, data) {
+    try {
+        await set(ref(db, `${path}/${id}`), data);
+        console.log("تم الحفظ بنجاح");
+        return true;
+    } catch (error) {
+        console.error("خطأ أثناء الحفظ: ", error);
+        return false;
+    }
+}
+
+/**
+ * دالة لجلب البيانات من مسار معين
+ * @param {string} path - مسار القسم (مثل: 'bookings')
+ */
+export async function getData(path) {
+    try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, path));
+        if (snapshot.exists()) {
+            return snapshot.val();
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("خطأ أثناء جلب البيانات: ", error);
+        return null;
+    }
+}
+
+/**
+ * دالة لتحديث بيانات موجودة
+ */
+export async function updateData(path, id, data) {
+    try {
+        const updates = {};
+        updates[`${path}/${id}`] = data;
+        await update(ref(db), updates);
+        console.log("تم التحديث بنجاح");
+        return true;
+    } catch (error) {
+        console.error("خطأ أثناء التحديث: ", error);
+        return false;
+    }
+}
+
+/**
+ * دالة لحذف بيانات
+ */
+export async function deleteData(path, id) {
+    try {
+        await remove(ref(db, `${path}/${id}`));
+        console.log("تم الحذف بنجاح");
+        return true;
+    } catch (error) {
+        console.error("خطأ أثناء الحذف: ", error);
+        return false;
+    }
+}
