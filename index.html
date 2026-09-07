@@ -745,9 +745,11 @@
                     <li onclick="switchTab('reservations', this)"><i class="fa-solid fa-file-lines"></i> سجل الحجوزات</li>
                     <li onclick="switchTab('expenses', this)"><i class="fa-solid fa-coins"></i> المصروفات والصيانة</li>
                     <li onclick="switchTab('reports', this)"><i class="fa-solid fa-file-invoice-dollar"></i> التقرير المالي</li>
-                    <li onclick="switchTab('backup', this)"><i class="fa-solid fa-database"></i> النسخ الاحتياطي</li>
-                </ul>
-            </div>
+
+<li onclick="switchTab('backup', this)" style="cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #ff9f43;">
+    <i class="fa-solid fa-database" style="color: #ff9f43;"></i> النسخ الاحتياطي
+</li>
+
             <div style="padding: 12px; text-align: center; color: #a4b0be; font-size: 10px; flex-shrink: 0;">
                 إدارة مطورة | تطوير FAHAD ALMUKLFI 
                 <p style="margin-top: 2px; font-size: 9px; color: #57606f;">جميع الحقوق محفوظة 2026</p>
@@ -755,6 +757,7 @@
         </aside>
 
         <main>
+
             <div class="header-container">
                 <div class="main-header-banner">
                     <div>
@@ -1320,8 +1323,10 @@
                 <p style="margin: 0 0 6px 0; font-weight: bold; color: #2b6cb0;">✨ تفاصيل الإصدار الجديد:</p>
                 <ul style="margin: 0; padding-right: 18px;">
                     <li style="margin-bottom: 5px;">تم ترتيب الواجهة وتحسين الأداء العام للنظام لتصبح أسرع.</li>
+                    <li style="margin-bottom: 5px;">نقل ازرار السند وارسال الواتس اب وباقي الازرار بظغط على اسم المستاجر وتضهر لك.</li>
+                    <li style="margin-bottom: 5px;">اضافة البيانات البنكية فالسند.</li>
                     <li style="margin-bottom: 5px;">إضافة ميزة حفظ التعديلات البنكية وشروط السند في المتصفح وزر الحفظ اليدوي.</li>
-                </ul>
+                  </ul>
             </div>
 
             <div style="border-top: 1px solid #edf2f7; padding-top: 10px; margin-bottom: 15px; text-align: center;">
@@ -2315,20 +2320,5 @@
             currentZoom = 1;
             document.body.style.zoom = currentZoom;
         }
-            <!-- دوال التكبير والتصغير الخاصة بك -->    <!-- دوال التكبير والتصغير الخاصة بك -->
-    <script>
-        function zoomOut() {
-            if (currentZoom > 0.8) {
-                currentZoom -= 0.1;
-                document.body.style.zoom = currentZoom;
-            }
-        }
-
-        function resetZoom() {
-            currentZoom = 1;
-            document.body.style.zoom = currentZoom;
-        }
-   
     </script>
 </body>
-</html>
