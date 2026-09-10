@@ -866,78 +866,138 @@
             </div>
 
             <div id="new-booking" class="tab-content">
-                <div style="font-size: 15px; font-weight: 800; color: #2f3640; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-chevron-left" style="font-size: 11px; color: #ff9f43;"></i> تسجيل حجز جديد
+    <!-- الهيدر مع زر الترس -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="font-size: 15px; font-weight: 800; color: #2f3640; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-chevron-left" style="font-size: 11px; color: #ff9f43;"></i> تسجيل حجز جديد
+        </div>
+        <!-- زر الترس لفتح وإغلاق الإعدادات -->
+        <button id="settings-toggle-btn" type="button" onclick="toggleSettings()" style="background: none; border: none; font-size: 18px; color: #57606f; cursor: pointer; padding: 5px;">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+    </div>
+
+    <!-- لوحة الإعدادات (مخفية افتراضياً) -->
+    <div id="settings-panel" class="card-box" style="display: none; background: #fff8f0; border: 1px solid #ffeaa7; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #d35400; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-sliders"></i> إعدادات أسعار الأقسام الافتراضية
+        </h4>
+
+        <!-- أسعار وسط الأسبوع -->
+        <div style="font-size: 12px; font-weight: bold; color: #2f3640; margin-bottom: 8px;">
+            <i class="fa-regular fa-calendar"></i> أيام وسط الأسبوع (الأحد - الأربعاء):
+        </div>
+        <div class="form-grid" style="margin-bottom: 15px;">
+            <div class="form-group">
+                <label>نساء</label>
+                <input type="number" id="cfg-price-women" value="600" placeholder="600">
+            </div>
+            <div class="form-group">
+                <label>رجال</label>
+                <input type="number" id="cfg-price-men" value="500" placeholder="500">
+            </div>
+            <div class="form-group">
+                <label>قسمين</label>
+                <input type="number" id="cfg-price-both" value="1000" placeholder="1000">
+            </div>
+        </div>
+
+        <!-- أسعار نهاية الأسبوع -->
+        <div style="font-size: 12px; font-weight: bold; color: #e67e22; margin-bottom: 8px;">
+            <i class="fa-solid fa-star"></i> أسعار نهاية الأسبوع (الخميس، الجمعة، السبت):
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>نساء (ويك إند)</label>
+                <input type="number" id="cfg-weekend-women" value="800" placeholder="800">
+            </div>
+            <div class="form-group">
+                <label>رجال (ويك إند)</label>
+                <input type="number" id="cfg-weekend-men" value="700" placeholder="700">
+            </div>
+            <div class="form-group">
+                <label>قسمين (ويك إند)</label>
+                <input type="number" id="cfg-weekend-both" value="1300" placeholder="1300">
+            </div>
+        </div>
+
+        <button type="button" class="btn" onclick="saveSettings()" style="margin-top: 15px; background: #e67e22; border: none; width: 100%;">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
+        </button>
+    </div>
+
+    <!-- نموذج الحجز -->
+    <div class="card-box">
+        <h3 id="form-title-text"><i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> حجز جديد للشاليه</h3>
+        <form id="quick-booking-form" onsubmit="saveBookingData(event)">
+            <input type="hidden" id="b-edit-id" value="">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>اسم المستأجر</label>
+                    <input type="text" id="b-name" required placeholder="مثال: تميم البدحاني">
                 </div>
-                <div class="card-box">
-                    <h3 id="form-title-text"><i class="fa-solid fa-plus-circle" style="color: #ff9f43;"></i> حجز جديد للشاليه</h3>
-                    <form id="quick-booking-form" onsubmit="saveBookingData(event)">
-                        <input type="hidden" id="b-edit-id" value="">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>اسم المستأجر</label>
-                                <input type="text" id="b-name" required placeholder="مثال: تميم البدحاني">
-                            </div>
-                            <div class="form-group">
-                                <label>رقم الجوال</label>
-                                <div class="phone-wrapper">
-                                    <span class="country-code">+966</span>
-                                    <input type="tel" id="b-phone" class="phone-input" placeholder="5xxxxxxxx" maxlength="9" oninput="formatPhoneNumber(this)" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>تاريخ الحجز</label>
-                                <input type="date" id="b-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label>الفترة</label>
-                                <select id="b-period">
-                                    <option>مساء</option>
-                                    <option>صباح</option>
-                                    <option>يوم كامل</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>القسم</label>
-                                <select id="b-section">
-                                    <option value="نساء">نساء</option>
-                                    <option value="رجال">رجال</option>
-                                    <option value="قسمين">قسمين (كامل الشاليه)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>قيمة الإيجار الإجمالية</label>
-                                <input type="number" id="b-price" required placeholder="600" oninput="calcRemaining()">
-                            </div>
-                            <div class="form-group">
-                                <label>العربون / المدفوع</label>
-                                <input type="number" id="b-paid" required placeholder="100" oninput="calcRemaining()">
-                            </div>
-                            <div class="form-group">
-                                <label>المتبقي تلقائياً</label>
-                                <input type="text" id="b-rem" readonly style="background: #f1f2f6; font-weight: bold; color: #c62828;">
-                            </div>
-                            <div class="form-group">
-                                <label>طريقة الدفع</label>
-                                <select id="b-method">
-                                    <option>تحويل بنكي</option>
-                                    <option>كاش</option>
-                                    <option>شبكة</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>حالة الحجز</label>
-                                <select id="b-status">
-                                    <option value="مؤكد">مؤكد بالكامل</option>
-                                    <option value="عربون">مدفوع عربون</option>
-                                    <option value="غير مؤكد">غير مؤكد / معلق</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn" style="margin-top: 10px;"><i class="fa-solid fa-check"></i> حفظ الحجز فوراً</button>
-                    </form>
+                <div class="form-group">
+                    <label>رقم الجوال</label>
+                    <div class="phone-wrapper">
+                        <span class="country-code">+966</span>
+                        <input type="tel" id="b-phone" class="phone-input" placeholder="5xxxxxxxx" maxlength="9" oninput="formatPhoneNumber(this)" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الحجز</label>
+                    <!-- يفحص اليوم تلقائياً عند تغيير التاريخ -->
+                    <input type="date" id="b-date" required onchange="updatePriceBySection()">
+                </div>
+                <div class="form-group">
+                    <label>الفترة</label>
+                    <select id="b-period">
+                        <option>مساء</option>
+                        <option>صباح</option>
+                        <option>يوم كامل</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>القسم</label>
+                    <select id="b-section" onchange="updatePriceBySection()">
+                        <option value="نساء">نساء</option>
+                        <option value="رجال">رجال</option>
+                        <option value="قسمين">قسمين (كامل الشاليه)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>قيمة الإيجار الإجمالية</label>
+                    <input type="number" id="b-price" required placeholder="600" oninput="calcRemaining()">
+                </div>
+                <div class="form-group">
+                    <label>العربون / المدفوع</label>
+                    <input type="number" id="b-paid" required placeholder="100" oninput="calcRemaining()">
+                </div>
+                <div class="form-group">
+                    <label>المتبقي تلقائياً</label>
+                    <input type="text" id="b-rem" readonly style="background: #f1f2f6; font-weight: bold; color: #c62828;">
+                </div>
+                <div class="form-group">
+                    <label>طريقة الدفع</label>
+                    <select id="b-method">
+                        <option>تحويل بنكي</option>
+                        <option>كاش</option>
+                        <option>شبكة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>حالة الحجز</label>
+                    <select id="b-status">
+                        <option value="مؤكد">مؤكد بالكامل</option>
+                        <option value="عربون">مدفوع عربون</option>
+                        <option value="غير مؤكد">غير مؤكد / معلق</option>
+                    </select>
                 </div>
             </div>
+            <button type="submit" class="btn" style="margin-top: 10px;"><i class="fa-solid fa-check"></i> حفظ الحجز فوراً</button>
+        </form>
+    </div>
+</div>
+
 
             <div id="calendar" class="tab-content">
                 <div style="font-size: 15px; font-weight: 800; color: #2f3640; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
@@ -2320,5 +2380,100 @@
             currentZoom = 1;
             document.body.style.zoom = currentZoom;
         }
+        // هيكل الأسعار الافتراضية (عادي ونهاية أسبوع)
+let defaultPrices = {
+    regular: {
+        'نساء': 600,
+        'رجال': 500,
+        'قسمين': 1000
+    },
+    weekend: {
+        'نساء': 800,
+        'رجال': 700,
+        'قسمين': 1300
+    }
+};
+
+// 1. إظهار وإخفاء لوحة الإعدادات
+function toggleSettings() {
+    const panel = document.getElementById('settings-panel');
+    panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+}
+
+// 2. تحميل البيانات عند بداية التشغيل
+document.addEventListener('DOMContentLoaded', () => {
+    const savedPrices = localStorage.getItem('chalet_prices');
+    if (savedPrices) {
+        defaultPrices = JSON.parse(savedPrices);
+        // تعبئة حقول العادي
+        document.getElementById('cfg-price-women').value = defaultPrices.regular['نساء'];
+        document.getElementById('cfg-price-men').value = defaultPrices.regular['رجال'];
+        document.getElementById('cfg-price-both').value = defaultPrices.regular['قسمين'];
+        
+        // تعبئة حقول الويك إند
+        document.getElementById('cfg-weekend-women').value = defaultPrices.weekend['نساء'];
+        document.getElementById('cfg-weekend-men').value = defaultPrices.weekend['رجال'];
+        document.getElementById('cfg-weekend-both').value = defaultPrices.weekend['قسمين'];
+    }
+    
+    // ضبط تاريخ اليوم كافتراضي إذا كان فارغاً
+    const dateInput = document.getElementById('b-date');
+    if (!dateInput.value) {
+        dateInput.valueAsDate = new Date();
+    }
+    
+    updatePriceBySection();
+});
+
+// 3. حفظ الإعدادات الجديدة
+function saveSettings() {
+    defaultPrices.regular['نساء'] = parseFloat(document.getElementById('cfg-price-women').value) || 0;
+    defaultPrices.regular['رجال'] = parseFloat(document.getElementById('cfg-price-men').value) || 0;
+    defaultPrices.regular['قسمين'] = parseFloat(document.getElementById('cfg-price-both').value) || 0;
+
+    defaultPrices.weekend['نساء'] = parseFloat(document.getElementById('cfg-weekend-women').value) || 0;
+    defaultPrices.weekend['رجال'] = parseFloat(document.getElementById('cfg-weekend-men').value) || 0;
+    defaultPrices.weekend['قسمين'] = parseFloat(document.getElementById('cfg-weekend-both').value) || 0;
+
+    localStorage.setItem('chalet_prices', JSON.stringify(defaultPrices));
+    
+    updatePriceBySection();
+    toggleSettings();
+    alert('تم حفظ إعدادات الأسعار بنجاح!');
+}
+
+// 4. تحديد إن كان التاريخ يقع في نهاية الأسبوع (الخميس 4، الجمعة 5، السبت 6)
+function isWeekend(dateString) {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const day = date.getDay(); // 4: الخميس, 5: الجمعة, 6: السبت
+    return day === 4 || day === 5 || day === 6;
+}
+
+// 5. تطبيق السعر التلقائي حسب (القسم + التاريخ)
+function updatePriceBySection() {
+    const selectedSection = document.getElementById('b-section').value;
+    const selectedDate = document.getElementById('b-date').value;
+    const priceInput = document.getElementById('b-price');
+
+    // اختيار القائمة المناسبة (عادي أو ويك إند)
+    const priceList = isWeekend(selectedDate) ? defaultPrices.weekend : defaultPrices.regular;
+
+    if (priceList[selectedSection] !== undefined) {
+        priceInput.value = priceList[selectedSection];
+    }
+
+    calcRemaining();
+}
+
+// 6. حساب المتبقي تلقائياً
+function calcRemaining() {
+    const price = parseFloat(document.getElementById('b-price').value) || 0;
+    const paid = parseFloat(document.getElementById('b-paid').value) || 0;
+    const remaining = price - paid;
+    
+    document.getElementById('b-rem').value = remaining >= 0 ? remaining : 0;
+}
+
     </script>
 </body>
